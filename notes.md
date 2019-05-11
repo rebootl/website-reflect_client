@@ -1,31 +1,20 @@
-## Tasks / Issues
 
-- entries in client
 
-- improve response err. message
+## ToDo
 
-- rework sel. CSS
 
-- finish the server
+* add new-entry input elements
 
-- subtags are part of topics
+* make new/edit elements for topics and subtags
 
-- catch type detect. on submit
+* encrypt private entries (probably Server side)
 
-- cleanup naming of "tags" -> "subtags"
+* get rid of the global_state user obj.
 
-- DB Model not null constr. (?)
+* Server side: change db public/private field
 
-- keep selection after tag creation if possible
 
-### Postponed
-
-- move types into menu ?
-  --> removed for now
-  - make submodule for type sel.
 
 ### Done
 
-- create a flash message system ==> DONE
-  - make a flash helper ==> DONE
-  - use helper in all sub-components ==> DONE
+* add pinned entries ==> DONE

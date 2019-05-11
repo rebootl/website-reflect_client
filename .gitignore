@@ -1,5 +1,3 @@
-__pycache__/
-Archive/
-venv*/
-reflect.db*
-client.save
+node_modules/
+public/
+npm-debug.log
