@@ -14,7 +14,7 @@ const style = html`
       box-sizing: border-box;
       background-color: var(--surface);
       /*border: 1px solid var(--border-back);*/
-      border-radius: 10px;
+      border-radius: 3px;
       position: relative;
       overflow: hidden;
       color: var(--light-text-hig-emph);

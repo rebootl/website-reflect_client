@@ -9,7 +9,7 @@ const style = html`
     input {
       background-color: rgba(0, 0, 0, 0.3);
       border: 2px solid rgba(0, 0, 0, 0.1);
-      border-radius: 15px;
+      border-radius: 3px;
       padding: 10px;
       line-height: 1.6em;
       font-size: 16px;

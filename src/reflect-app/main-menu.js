@@ -15,7 +15,7 @@ const style = html`
       color: var(--light-text-hig-emph);
       /* stub height */
       min-height: 100px;
-      border-radius: 10px;
+      border-radius: 3px;
       /*margin-top: 10px;
       margin-left: 10px;*/
       overflow: hidden;

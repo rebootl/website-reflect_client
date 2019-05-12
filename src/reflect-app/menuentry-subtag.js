@@ -9,7 +9,7 @@ const style = html`
       line-height: 30px;*/
       padding: 11px 9px 11px 9px;
       border: 2px solid var(--on-surface-line);
-      border-radius: 12px;
+      border-radius: 20px;
       margin: 7px 5px 7px 5px;
       color: var(--light-text-med-emph);
       font-size: 16px;

@@ -5,8 +5,8 @@ const style = html`
     :host {
       display: block;
       box-sizing: border-box;
-      height: 60px;
-      line-height: 60px;
+      height: 48px;
+      line-height: 48px;
       padding-left: 20px;
       margin: 0 5px 5px 5px;
       border-radius: 3px;
