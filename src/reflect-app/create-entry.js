@@ -7,10 +7,10 @@ const style = html`
       display: block;
       /*box-sizing: border-box;*/
       padding: 15px 15px 10px 25px;
-      border-bottom: 1px solid var(--border-back);
+      border-bottom: 1px solid var(--on-background-border);
     }
     a {
-      color: var(--link-text);
+      color: var(--primary);
     }
     .inline {
       display: inline-block;
@@ -18,21 +18,21 @@ const style = html`
     #new-entry-typedet {
       display: block;
       padding: 10px 0 0 10px;
-      /*color: var(--text-inactive);*/
+      color: var(--light-text-low-emph);
     }
     #new-entry-type {
-      color: var(--text-inactive);
+      color: var(--light-text-low-emph);
     }
     #new-entry-type.pend {
-      color: var(--text);
+      color: var(--light-text-med-emph);
     }
     #new-entry-type.note {
-      color: var(--bg-back);
-      background-color: var(--text);
+      color: var(--background);
+      background-color: var(--light-text-med-emph);
     }
     #new-entry-type.link {
-      color: var(--bg-back);
-      background-color: var(--link-text);
+      color: var(--background);
+      background-color: var(--primary);
     }
   </style>
 `;

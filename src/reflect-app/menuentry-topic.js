@@ -10,8 +10,6 @@ const style = html`
       padding-left: 20px;
       margin: 0 5px 5px 5px;
       border-radius: 3px;
-      /*color: var(--text-menu-inactive);*/
-      /*background-color: var(--surface);*/
       color: var(--light-text-med-emph);
       font-size: 18px;
       font-weight: lighter;

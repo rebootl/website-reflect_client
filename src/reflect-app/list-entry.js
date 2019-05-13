@@ -26,7 +26,7 @@ const style = html`
     }
     .listentry-header {
       /*font-size: 0.8em;*/
-      color: var(--light-text-disabled);
+      color: var(--light-text-low-emph);
     }
     .listentry-body {
       /*overflow: hidden;*/

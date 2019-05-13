@@ -17,7 +17,9 @@ const style = html`
       --primary-variant: #287b7b;
       --secondary: #c47be0;
       --background: #121212;
-      --surface: #121212;
+      /* alt */
+      /*--background: #020202;*/
+      --surface: #0b0b0b;
       --error: #cf6679;
       --on-primary: #000;
       --on-secondary: #000;
@@ -27,14 +29,20 @@ const style = html`
 
       --light-text-hig-emph: rgba(255, 255, 255, 0.87);
       --light-text-med-emph: rgba(255, 255, 255, 0.6);
-      --light-text-disabled: rgba(255, 255, 255, 0.38);
+      --light-text-low-emph: rgba(255, 255, 255, 0.38);
 
       --on-background-border: #222;
       --on-surface-line: #333;
 
       /* header */
-      --bg-header: rgb(0, 0, 0);
+      --bg-header: #000;
+      /* alt. */
+      /*--bg-header: #121212;*/
+      --bg-header-active: rgb(15, 15, 15);
       --header-bottom-line: rgb(20, 20, 20);
+      --header-bottom-line: #101010;
+
+      /* -> remove */
       /* background */
       --bg-floor: rgb(15, 15, 15);
       /* general */
@@ -74,12 +82,9 @@ const style = html`
         "main-menu"
         "add-box"
         "main-content";
-      margin: 10px;
-      grid-gap: 10px;
     }
     main-menu {
       grid-area: main-menu;
-      /*border: 1px solid red;*/
     }
     #add-box {
       grid-area: add-box;
@@ -92,11 +97,11 @@ const style = html`
     @media all and (min-width: 680px) {
       #wrapper-container {
         grid-template-columns: 230px auto;
-        grid-template-rows: auto auto 1fr;
+        grid-template-rows: auto 1fr;
         grid-template-areas:
           "main-menu  main-content"
-          "add-box    main-content"
-          ".          main-content";
+          "add-box    main-content";
+        min-height: calc(100vh - 49px);
       }
       main-content {
         max-width: 650px;
@@ -104,22 +109,25 @@ const style = html`
     }
     @media all and (min-width: 870px) {
       #wrapper-container {
-        /*grid-gap: 10px;*/
       }
     }
     @media all and (min-width: 1142px) {
-      /* 1070px + 12px scrollbar */
+      /* 1130px + 12px scrollbar */
       #wrapper-container {
         grid-template-columns: 230px auto 230px;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: auto;
         grid-template-areas:
-          "main-menu  main-content  add-box"
-          ".          main-content  .";
+          "main-menu  main-content  add-box";
       }
       main-content {
         width: 650px;
         justify-self: center;
       }
+    }
+    #add-box {
+      display: block;
+      background-color: var(--surface);
+      height: 100%;
     }
   </style>
 `;

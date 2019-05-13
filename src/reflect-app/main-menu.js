@@ -15,17 +15,15 @@ const style = html`
       color: var(--light-text-hig-emph);
       /* stub height */
       min-height: 100px;
-      border-radius: 3px;
-      /*margin-top: 10px;
-      margin-left: 10px;*/
-      overflow: hidden;
+      padding-top: 5px;
       /*border: 1px dashed #333;*/
     }
     .elevation-01dp {
-      width: 100%;
+      /* use el. to lighten bg */
+      /*width: 100%;
       height: 100%;
       background-color: rgb(255, 255, 255, 0.05);
-      padding-top: 5px;
+      padding-top: 5px;*/
     }
     ul {
       margin: 0;

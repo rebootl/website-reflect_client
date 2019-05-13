@@ -6,7 +6,7 @@ const style = html`
     :host {
       display: flex;
       box-sizing: border-box;
-      background-color: rgba(0,0,0,0);
+      /*background-color: rgba(0,0,0,0);*/
       justify-content: center;
       align-items: center;
       height: 100%;
@@ -15,7 +15,7 @@ const style = html`
       cursor: pointer;
     }
     :host(.active) {
-      background-color: rgb(15,15,15);
+      background-color: var(--bg-header-active);
     }
     #icon-user {
       padding-left: 10px;
