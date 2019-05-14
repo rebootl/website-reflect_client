@@ -24,11 +24,17 @@ const style = html`
     :host(.private) a {
       color: var(--secondary);
     }
-    .listentry-header {
+    .le-header-text {
       /*font-size: 0.8em;*/
       color: var(--light-text-low-emph);
     }
-    .listentry-body {
+    .le-header-icon {
+      vertical-align: middle;
+      padding-left: 3px;
+      opacity: 0.87;
+      /*float: right;*/
+    }
+    .le-body {
       /*overflow: hidden;*/
       box-sizing: border-box;
       margin: 0 15px 5px 15px;
@@ -40,10 +46,6 @@ const style = html`
     .emoji {
       height: 1.5em;
       vertical-align: middle;
-    }
-    .private-icon {
-      vertical-align: middle;
-      /*float: right;*/
     }
     a {
       color: var(--primary);
@@ -75,12 +77,18 @@ class ListEntry extends HTMLElement {
     //<div >
     //</div>
     render(html`${style}
-      ${ this.entry.pinned ? html`<img class="private-icon" src="layout/icons/pin_16.png">` : html`` }
-      ${ this.entry.private ? html`<img class="private-icon" src="layout/icons/private_32.png">` : html`` }
-      <small class="listentry-header">${this.entry.timestamp}
+      <small class="le-header-text">${this.entry.timestamp}
         <a href="#entry?id=${this.entry.id}">#entry?id=${this.entry.id}</a>
       </small>
-      <div class="listentry-body">${unsafeHTML(md.render(this.entry.content.text))}</div>
+      ${ this.entry.private ?
+        html`<img class="le-header-icon" src="layout/icons/private_32.png">
+             <small class="le-header-text">(private)</small>` :
+        html`` }
+      ${ this.entry.pinned ?
+        html`<img class="le-header-icon" src="layout/icons/pin_16.png">
+             <small class="le-header-text">(pinned)</small>` :
+        html`` }
+      <div class="le-body">${unsafeHTML(md.render(this.entry.content.text))}</div>
       `, this.shadowRoot);
   }
 }

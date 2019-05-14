@@ -6,7 +6,7 @@ const style = html`
     :host {
       display: block;
       /*box-sizing: border-box;*/
-      padding: 15px 15px 10px 25px;
+      padding: 15px 15px 10px 15px;
       border-bottom: 1px solid var(--on-background-border);
     }
     a {
