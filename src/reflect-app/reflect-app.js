@@ -22,6 +22,7 @@ const style = html`
       --surface: #0b0b0b;
       --error: #cf6679;
       --on-primary: #000;
+      --on-primary-variant: #fff;
       --on-secondary: #000;
       --on-background: #fff;
       --on-surface: #fff;

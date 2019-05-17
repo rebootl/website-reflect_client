@@ -1,5 +1,8 @@
 import { html, render } from 'lit-html';
 import './gen-elements/text-input.js';
+import { api_req_get } from './api_request_helpers.js';
+import { url_info_url } from './urls.js';
+import auth from './auth.js';
 
 const style = html`
   <style>
@@ -22,17 +25,32 @@ const style = html`
     }
     #new-entry-type {
       color: var(--light-text-low-emph);
+      border-radius: 3px;
+      padding: 2px;
     }
     #new-entry-type.pend {
-      color: var(--light-text-med-emph);
+      /*color: var(--light-text-med-emph);*/
     }
     #new-entry-type.note {
       color: var(--background);
+      color: #000;
       background-color: var(--light-text-med-emph);
     }
     #new-entry-type.link {
-      color: var(--background);
+      color: var(--on-primary);
       background-color: var(--primary);
+    }
+    #link-type-label {
+      border-radius: 3px;
+      padding: 2px;
+    }
+    .brokenlink {
+      color: var(--on-error);
+      background-color: var(--error);
+    }
+    .goodlink {
+      color: var(--on-primary);
+      background-color: var(--primary-variant);
     }
   </style>
 `;
@@ -72,12 +90,41 @@ const entrytypes = {
   },
 };
 
+const linktypes = {
+  none: {
+    label: '',
+    title: '',
+    class: ''
+  },
+  pending: {
+    label: 'getting url info...',
+    title: '',
+    class: ''
+  },
+  error: {
+    label: 'broken link :(',
+    title: '',
+    class: 'brokenlink'
+  },
+  success: {
+    label: '',
+    title: '',
+    class: 'goodlink'
+  },
+  /*image: {
+    label: '',
+    title: '',
+    class: 'image'
+  }*/
+}
+
 class CreateEntry extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
 
     this.detected_type = entrytypes.unknown;
+    this.link_type = linktypes.none;
     this.update();
     // setup type detection
     const detect_type_throttled = throttle(() => this.detect_type(), 1000);
@@ -93,6 +140,7 @@ class CreateEntry extends HTMLElement {
   detect_type_pending() {
     //console.log("inputchaaaaaange :D")
     this.detected_type = entrytypes.pending;
+    this.link_type = linktypes.none;
     this.update();
   }
   detect_type() {
@@ -102,10 +150,28 @@ class CreateEntry extends HTMLElement {
     const val = this.textinput_el.value;
     if (val.startsWith('http://') || val.startsWith('https://')) {
       this.detected_type = entrytypes.link;
+      this.update_link_type(val);
+      //this.update();
     } else if (val == '') {
       this.detected_type = entrytypes.unknown;
+      this.link_type = linktypes.none;
     } else {
       this.detected_type = entrytypes.note;
+      this.link_type = linktypes.none;
+    }
+    this.update();link
+  }
+  async update_link_type(url) {
+    this.link_type = linktypes.pending;
+    const url_info = await api_req_get(url_info_url + '?url=' + encodeURIComponent(url),
+      auth.get_auth_header());
+    if (url_info.success) {
+      this.link_type = linktypes.success;
+      this.link_type.label = url_info.cont_type;
+      this.link_type.title = url_info.title;
+    } else {
+      this.link_type = linktypes.error;
+      this.link_type.title = url_info.err_msg;
     }
     this.update();
   }
@@ -121,6 +187,8 @@ class CreateEntry extends HTMLElement {
       </div>
       <small id="new-entry-typedet" >Type:
         <span id="new-entry-type" class="${this.detected_type.class}">${this.detected_type.label}</span>
+        <span id="link-type-label" class="${this.link_type.class}">${this.link_type.label}</span>
+        <span id="link-type-title">${this.link_type.title}</span>
       </small>
       `, this.shadowRoot);
   }
