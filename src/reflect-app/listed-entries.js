@@ -40,6 +40,12 @@ class ListedEntries extends HTMLElement {
     //console.log(this.url_state_obj.params_str);
     this.entries_obj = await api_req_get(entries_url + '?' + this.url_state_obj.params_str,
       auth.get_auth_header());
+    //console.log(this.entries_obj);
+    if (!this.entries_obj) {
+      console.log("Error fetching data... :(");
+      // -> evtl. flash msg / some error output
+      return false;
+    }
     this.update();
   }
   update() {
