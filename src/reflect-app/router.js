@@ -3,8 +3,10 @@
 //   Router.register(this)
 //
 // they shall implement:
+//   comp.router_register(url_state_obj)
 //   comp.router_update(url_state_obj)
-// which will be called on url update/page load
+//   comp.router_load(url_state_obj)
+// which will be called on url update/page load/register
 //
 // url_state_obj being something like: {
 //  route: 'blabla',
@@ -17,9 +19,12 @@ const registered_components = new Set();
 
 const dec = decodeURIComponent;
 
-export class Router {
-  static register(comp) {
+class Router {
+  register(comp) {
     registered_components.add(comp);
+    const route_params_obj = this.parse_url();
+    console.log("router register");
+    comp.router_register(route_params_obj);
   }
   constructor() {
     window.addEventListener('hashchange', ()=>this.url_change());
@@ -64,6 +69,7 @@ export class Router {
         }
       });
     }
+    //console.log(params);
     return {
       route: route_params[0],
       params: params,

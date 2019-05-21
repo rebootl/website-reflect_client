@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html';
-import { Router } from './router.js';
+import { myrouter } from './router.js';
 import './listed-entries.js';
 
 const style = html`
@@ -26,8 +26,9 @@ class MainContent extends HTMLElement {
     super();
     this.attachShadow({mode: 'open'});
 
-    Router.register(this);
+    myrouter.register(this);
   }
+  router_register(url_state_obj) {}
   router_load(url_state_obj) {
     this.router_update(url_state_obj);
   }
