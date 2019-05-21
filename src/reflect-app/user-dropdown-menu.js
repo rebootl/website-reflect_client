@@ -18,6 +18,7 @@ const style = html`
       position: relative;
       overflow: hidden;
       color: var(--light-text-hig-emph);
+      z-index: 1000;
     }
     .overlay {
       background-color: rgba(255, 255, 255, 0.16);
