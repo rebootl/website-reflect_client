@@ -1,27 +1,6 @@
 import { global_state } from './global_state.js';
 import { login_url } from './urls.js';
-
-const api_req_post = async (api_url, params) => {
-  try {
-    const response = await fetch(api_url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(params)
-    });
-    //console.log(response);
-    if (!response.ok) {
-      throw new Error('HTTP error, status = ' + response.status);
-    }
-    const data = await response.json();
-    return data;
-  } catch(err) {
-    console.log(err);
-    return false;
-  }
-}
+import { api_req_post } from './api_request_helpers.js'
 
 export default {
 
