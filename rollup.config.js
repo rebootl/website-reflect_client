@@ -20,7 +20,8 @@ export default {
         copy({
           'src/index.html': 'public/index.html',
           'src/base.css': 'public/base.css',
-          'src/layout': 'public/layout'
+          'src/layout': 'public/layout',
+          'src/ext-js': 'public/ext-js'
         }),
         production && terser(), // minify, but only in production
     ]
