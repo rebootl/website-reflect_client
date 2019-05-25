@@ -28,6 +28,9 @@ class TextInput extends HTMLElement {
   get value() {
     return this.shadowRoot.querySelector('input').value;
   }
+  set value(v) {
+    this.shadowRoot.querySelector('input').value = v;
+  }
   get size() {
     if (!this.getAttribute('size')) return 10;
     else return this.getAttribute('size');
