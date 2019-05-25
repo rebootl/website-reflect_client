@@ -8,6 +8,7 @@ const style = html`
       height: 48px;
       line-height: 48px;
       padding-left: 20px;
+      padding-right: 20px;
       margin: 0 5px 5px 5px;
       border-radius: 3px;
       color: var(--light-text-med-emph);
