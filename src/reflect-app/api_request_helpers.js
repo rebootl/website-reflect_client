@@ -15,14 +15,16 @@ export const api_req_get = async (api_url, header) => {
   }
 }
 
-export const api_req_post = async (api_url, params) => {
+const default_header = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json'
+}
+
+export const api_req_post = async (api_url, params, header=default_header) => {
   try {
     const response = await fetch(api_url, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers: header,
       body: JSON.stringify(params)
     });
     //console.log(response);

@@ -49,6 +49,8 @@ export default {
   get_auth_header() {
     if (global_state.user.logged_in) {
       return {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization':  'Bearer ' + localStorage.getItem('access_token')
       }
     } else {
