@@ -74,7 +74,10 @@ const style = html`
       padding: 10px;
     }
     #input-err {
-      color: yellow;
+      display: block;
+      color: var(--error);
+      padding-left: 15px;
+      padding-top: 5px;
     }
   </style>
 `;
@@ -158,6 +161,10 @@ async function get_link_type(url) {
   return link_type;
 }
 
+const event_created = new CustomEvent('created', {
+  bubbles: true,
+});
+
 class CreateEntry extends HTMLElement {
   constructor() {
     super();
@@ -202,7 +209,7 @@ class CreateEntry extends HTMLElement {
     this.update();
   }
   async submit() {
-    console.log("submiiiiiiiiiit :P");
+    console.log("submitting...");
     // check detection status
     if (this.detected_type === entrytypes.unknown) {
       this.input_err = "Couldn't determine input...";
@@ -228,13 +235,15 @@ class CreateEntry extends HTMLElement {
       author: global_state.user.name,
       sel_data: topics
     };
-    // -> send request
+    // send request
     const res = await api_req_post(entries_url, params, auth.get_auth_header());
     if (res) {
       this.reset_types();
       this.textinput_el.value = "";
+      // -> make this flash msg later
       this.input_err = "Entry created successfully! ID: " + res.id;
       console.log(res);
+      this.dispatchEvent(event_created);
       this.update();
     } else {
       this.input_err = "Error creating entry... :(";
@@ -269,7 +278,9 @@ class CreateEntry extends HTMLElement {
         <labelled-button class="inline"
                          @click=${()=>this.submit()} label="Create"></labelled-button>
       </div>
-      <small id="input-err">${this.input_err}</small>
+      ${ this.input_err != "" ?
+        html`<small id="input-err">${this.input_err}</small>` :
+        html`` }
       <small id="new-entry-typedet">Type:
         <span id="new-entry-type" class="${this.detected_type.class}">${this.detected_type.label}</span>
         <span id="link-type-label" class="${this.link_type.class}">${this.link_type.label}</span>

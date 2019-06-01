@@ -51,7 +51,9 @@ class ListedEntries extends HTMLElement {
   update() {
     //console.log(this.entries_obj.entries);
     render(html`${style}
-      ${ global_state.user.logged_in ? html`<create-entry></create-entry>` : html`` }
+      ${ global_state.user.logged_in ?
+        html`<create-entry @created="${()=>this.state_update()}"></create-entry>` :
+        html`` }
       <ul id="entries-list">
         ${repeat(this.entries_obj.entries, entry => entry.id, entry => html`
         <li><list-entry .entry=${entry}></list-entry></li>`)}
