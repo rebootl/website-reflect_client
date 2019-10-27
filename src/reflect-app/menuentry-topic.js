@@ -14,6 +14,9 @@ const style = html`
       color: var(--light-text-med-emph);
       font-size: 18px;
       font-weight: lighter;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     :host(:hover) {
       cursor: pointer;
