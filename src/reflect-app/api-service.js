@@ -1,7 +1,9 @@
 import { API } from 'projectData-client';
+import { setApi } from 'projectData-client/dist/Inspector.js';
 import faker from 'faker';
 
 export const api = new API('http://invalid./');
+setApi(api);
 
 export const create_example_data = async function() {
   // api.setparams...

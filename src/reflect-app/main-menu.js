@@ -54,9 +54,18 @@ class MainMenu extends HTMLElement {
     myrouter.register(this);
   }
   async router_register(url_state_obj) {
-    const db = await api.getSource('entries');
     //create_example_data();
+
+    // get topics
+/*
     this.topics = await db.query([
+      {$unwind: "$topics"},
+      {$group: {_id: "$topics.topic"}},
+      {$sort: {_id: 1}},
+      {$project: {name: "$_id"}},
+    ]);
+*/
+/*    this.topics = await db.query([
       {$unwind: "$topics"},
       {$group: {_id:"$topics.topic", tags:{$push:"$topics.tags"}}},
       {$project: {tags: {$concatArrays:"$tags"}}},
@@ -65,7 +74,7 @@ class MainMenu extends HTMLElement {
       {$group: {_id:"$_id", tags:{$addToSet:"$tags"}}},
       {$project: {name: "$_id", tags: "$tags"}},
       {$sort: {_id: 1}}
-    ]);
+    ]);*/
     console.log(this.topics);
     this.update_menu_by_url(url_state_obj);
   }
@@ -73,27 +82,59 @@ class MainMenu extends HTMLElement {
   router_update(url_state_obj) {
     this.update_menu_by_url(url_state_obj);
   }
-  update_menu_by_url(url_state_obj) {
+  async update_menu_by_url(url_state_obj) {
     // get topics from url
     const params = url_state_obj.params;
     console.log(params);
-    this.active_topics = [];
-    if (params.hasOwnProperty('select') && params.hasOwnProperty('topic_ids')) {
-      for (const t of params.topic_ids) {
-        this.active_topics.push(t);
-      }
-    }
+    this.active_topics = params.topic_ids || [];
     // get subtags
-    this.active_subtags = [];
-    if (params.hasOwnProperty('subtag_ids')) {
-      for (const s of params.subtag_ids) {
-        this.active_subtags.push(s);
-      }
-    }
+    this.active_subtags = params.subtag_ids || [];
+
+    const db = await api.getSource('entries');
+    // -> get selected topics
+    this.topics = await db.query([
+      {$unwind: "$topics"},
+      {$group: {_id:"$topics.topic" }},
+      {$sort: {_id: 1}},
+      {$project: {
+        _id: -1,
+        name: "$_id",
+        selected: {$in: [
+          "$_id",
+          this.active_topics
+        ]}}
+      },
+    ]);
+    // -> get subtags of selected topics
+    this.tags = await db.query([
+      {$unwind: "$topics"},
+      {$project: {
+        topic: "$topics.topic",
+        tags: "$topics.tags",
+        selected: {$in: [
+          "$topics.topic",
+          this.active_topics
+        ]}}
+      },
+      {$match: {selected: true}},
+      {$unwind: "$tags"},
+      {$group: {_id: "$tags"}},
+      {$project: {
+        _id: -1,
+        tag: "$_id",
+        selected: {$in: [
+          "$_id",
+          this.active_subtags
+        ]}
+      }},
+      {$sort: {tag: 1}}
+    ]);
+
     this.update();
   }
   toggle_topic(topic_name) {
     if (this.active_topics.includes(topic_name)) {
+      this.active_subtags = [];
       this.active_topics.splice(this.active_topics.indexOf(topic_name), 1);
     } else {
       this.active_topics.push(topic_name);
