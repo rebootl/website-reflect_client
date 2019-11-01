@@ -19,13 +19,6 @@ const style = html`
       padding-top: 5px;
       /*border: 1px dashed #333;*/
     }
-    .elevation-01dp {
-      /* use el. to lighten bg */
-      /*width: 100%;
-      height: 100%;
-      background-color: rgb(255, 255, 255, 0.05);
-      padding-top: 5px;*/
-    }
     ul {
       margin: 0;
       padding-left: 0;
@@ -39,9 +32,6 @@ const style = html`
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-    }
-    #subtags li {
-      /*display: inline-block;*/
     }
   </style>
 `;
