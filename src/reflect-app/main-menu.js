@@ -54,6 +54,7 @@ class MainMenu extends HTMLElement {
     myrouter.register(this);
   }
   async router_register(url_state_obj) {
+    // uncomment to create example data
     //create_example_data();
     this.update_menu_by_url(url_state_obj);
   }
@@ -63,8 +64,9 @@ class MainMenu extends HTMLElement {
   }
   async update_menu_by_url(url_state_obj) {
     const params = url_state_obj.params;
-    this.active_topics = params.topic_ids || [];
-    this.active_subtags = params.subtag_ids || [];
+    this.active_topics = params.topics || [];
+    this.active_subtags = params.subtags || [];
+    console.log(params);
 
     const db = await api.getSource('entries');
     // get topics
@@ -105,7 +107,6 @@ class MainMenu extends HTMLElement {
       }},
       {$sort: {tag: 1}}
     ]);
-    console.log(this.subtags);
     this.update();
   }
   toggle_topic(topic_name) {
@@ -123,7 +124,6 @@ class MainMenu extends HTMLElement {
     } else {
       this.active_subtags.push(subtag);
     }
-    console.log(this.active_subtags);
     this.update_url();
   }
   update_url() {
@@ -133,28 +133,28 @@ class MainMenu extends HTMLElement {
     // #entries?select=true &topic_id[]=3 &tag_id[]=2 &tag_id[]=3
     let hash_url = "#entries";
     if (this.active_topics.length > 0) {
-      hash_url += "?select";
+      hash_url += "?selected";
       for (const t of this.active_topics) {
-        hash_url += '&topic_ids[]=' + t;
+        console.log(encodeURIComponent(t));
+        hash_url += '&topics[]=' + encodeURIComponent(t);
       }
       for (const s of this.active_subtags) {
-        hash_url += '&subtag_ids[]=' + s;
+        hash_url += '&subtags[]=' + encodeURIComponent(s);
       }
     }
     // update it
     window.location.hash = hash_url;
   }
-  get_subtags_torender() {
+  // not used atm.
+  /*get_subtags_torender() {
     const subtags_to_render = this.topics
       .filter(t => this.active_topics.includes(t.name))
       .flatMap(t => t.tags);
     // (make unique, sort)
     return [...new Set(subtags_to_render)].sort();
-  }
+  }*/
   update() {
-
     //const subtags_to_render = this.get_subtags_torender();
-
     render(html`${style}
       <div class="elevation-01dp">
         <nav id="topics">
