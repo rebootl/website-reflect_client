@@ -9,8 +9,6 @@ export const create_example_data = async function() {
   // api.setparams...
 
   // create example data
-  //const title = e.target['todo'].value;
-  //const date = new Date();
   const db = await api.getSource('entries');
   await db.delete({"topics": { $size: 3 }});
 

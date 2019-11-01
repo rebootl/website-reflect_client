@@ -55,27 +55,6 @@ class MainMenu extends HTMLElement {
   }
   async router_register(url_state_obj) {
     //create_example_data();
-
-    // get topics
-/*
-    this.topics = await db.query([
-      {$unwind: "$topics"},
-      {$group: {_id: "$topics.topic"}},
-      {$sort: {_id: 1}},
-      {$project: {name: "$_id"}},
-    ]);
-*/
-/*    this.topics = await db.query([
-      {$unwind: "$topics"},
-      {$group: {_id:"$topics.topic", tags:{$push:"$topics.tags"}}},
-      {$project: {tags: {$concatArrays:"$tags"}}},
-      {$unwind: "$tags"},
-      {$sort: {tags: 1}},
-      {$group: {_id:"$_id", tags:{$addToSet:"$tags"}}},
-      {$project: {name: "$_id", tags: "$tags"}},
-      {$sort: {_id: 1}}
-    ]);*/
-    console.log(this.topics);
     this.update_menu_by_url(url_state_obj);
   }
   router_load(url_state_obj) {}
@@ -83,15 +62,12 @@ class MainMenu extends HTMLElement {
     this.update_menu_by_url(url_state_obj);
   }
   async update_menu_by_url(url_state_obj) {
-    // get topics from url
     const params = url_state_obj.params;
-    console.log(params);
     this.active_topics = params.topic_ids || [];
-    // get subtags
     this.active_subtags = params.subtag_ids || [];
 
     const db = await api.getSource('entries');
-    // -> get selected topics
+    // get topics
     this.topics = await db.query([
       {$unwind: "$topics"},
       {$group: {_id:"$topics.topic" }},
@@ -105,8 +81,8 @@ class MainMenu extends HTMLElement {
         ]}}
       },
     ]);
-    // -> get subtags of selected topics
-    this.tags = await db.query([
+    // get subtags of selected topics
+    this.subtags = await db.query([
       {$unwind: "$topics"},
       {$project: {
         topic: "$topics.topic",
@@ -121,7 +97,7 @@ class MainMenu extends HTMLElement {
       {$group: {_id: "$tags"}},
       {$project: {
         _id: -1,
-        tag: "$_id",
+        name: "$_id",
         selected: {$in: [
           "$_id",
           this.active_subtags
@@ -129,7 +105,7 @@ class MainMenu extends HTMLElement {
       }},
       {$sort: {tag: 1}}
     ]);
-
+    console.log(this.subtags);
     this.update();
   }
   toggle_topic(topic_name) {
@@ -177,7 +153,7 @@ class MainMenu extends HTMLElement {
   }
   update() {
 
-    const subtags_to_render = this.get_subtags_torender();
+    //const subtags_to_render = this.get_subtags_torender();
 
     render(html`${style}
       <div class="elevation-01dp">
@@ -192,11 +168,11 @@ class MainMenu extends HTMLElement {
           </ul>
         </nav>
         <nav id="subtags">
-          <ul>${repeat(subtags_to_render, subtag => subtag, subtag => html`
+          <ul>${this.subtags.map(subtag => html`
             <li>
-              <menuentry-subtag class="${ this.active_subtags.includes(subtag) ?
-                'active' : ''}" @click=${() => this.toggle_subtag(subtag)}>
-                ${subtag}
+              <menuentry-subtag class="${ this.active_subtags.includes(subtag.name) ?
+                'active' : ''}" @click=${() => this.toggle_subtag(subtag.name)}>
+                ${subtag.name}
               </menuentry-subtag>
             </li>`)}
           </ul>
