@@ -56,7 +56,6 @@ class MainMenu extends HTMLElement {
     const params = url_state_obj.params;
     this.active_topics = params.topics || [];
     this.active_subtags = params.subtags || [];
-    console.log(params);
 
     const db = await api.getSource('entries');
     // get topics
@@ -95,7 +94,7 @@ class MainMenu extends HTMLElement {
           this.active_subtags
         ]}
       }},
-      {$sort: {tag: 1}}
+      {$sort: {name: 1}}
     ]);
     this.update();
   }
@@ -125,7 +124,6 @@ class MainMenu extends HTMLElement {
     if (this.active_topics.length > 0) {
       hash_url += "?selected";
       for (const t of this.active_topics) {
-        console.log(encodeURIComponent(t));
         hash_url += '&topics[]=' + encodeURIComponent(t);
       }
       for (const s of this.active_subtags) {
