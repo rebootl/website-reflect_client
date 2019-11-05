@@ -6,7 +6,6 @@ import { observableList } from './observableList';
 const style = html`
   <style>
     :host {
-      display: block;
       box-sizing: border-box;
       background-color: var(--surface);
       color: var(--light-text-hig-emph);
@@ -16,6 +15,8 @@ const style = html`
       /*border: 1px dashed #333;*/
     }
     ul {
+      display: flex;
+      flex-wrap: wrap;
       margin: 0;
       padding-left: 0;
       list-style: none;
@@ -32,6 +33,7 @@ class TopicsList extends HTMLElement {
     return this._activeTopics || [];
   }
   set activeTopics(v) {
+    if (JSON.stringify(v) === JSON.stringify(this._activeTopics)) return;
     this._activeTopics = v;
     if (this.topics) this.update_query();
   }
@@ -64,7 +66,7 @@ class TopicsList extends HTMLElement {
     }
     this.dispatchEvent(new CustomEvent('selectionchanged',
       {detail: this.activeTopics}));
-    //this.update_url();
+    this.update_query();
   }
   update() {
     render(html`${style}
