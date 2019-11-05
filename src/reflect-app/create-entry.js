@@ -1,5 +1,6 @@
 import { html, render } from 'lit-html';
 import './gen-elements/text-input.js';
+import './input-entry.js';
 import { api_req_get, api_req_post } from './api_request_helpers.js';
 import { url_info_url, entries_url } from './urls.js';
 import { myrouter } from './router.js';
@@ -23,49 +24,15 @@ const style = html`
     .inline {
       display: inline-block;
     }
-    #new-entry-typedet {
-      display: block;
-      padding: 10px 0 0 10px;
-      color: var(--light-text-low-emph);
-    }
-    #new-entry-type {
-      color: var(--light-text-low-emph);
-      border-radius: 3px;
-      padding: 2px;
-    }
-    #new-entry-type.pend {
-      /*color: var(--light-text-med-emph);*/
-    }
-    #new-entry-type.note {
-      color: var(--background);
-      color: #000;
-      background-color: var(--light-text-med-emph);
-    }
-    #new-entry-type.link {
-      color: var(--on-primary);
-      background-color: var(--primary);
-    }
-    #link-type-label {
-      border-radius: 3px;
-      padding: 2px;
-    }
-    .brokenlink {
-      color: var(--on-error);
-      background-color: var(--error);
-    }
-    .goodlink {
-      color: var(--on-primary);
-      background-color: var(--primary-variant);
-    }
     #input-overlay-fix {
       position: relative;
     }
     #input-overlay {
       background-color: var(--surface);
-      position: absolute;
+      /*position: absolute;
       left: 40px;
       top: 5px;
-      z-index: 500;
+      z-index: 500;*/
       border-radius: 5px;
       overflow: hidden;
     }
@@ -73,92 +40,14 @@ const style = html`
       background-color: rgba(255, 255, 255, 0.10);
       padding: 10px;
     }
-    #input-err {
-      display: block;
-      color: var(--error);
-      padding-left: 15px;
-      padding-top: 5px;
-    }
   </style>
 `;
-
-// adapted from: https://stackoverflow.com/questions/27078285/simple-throttle-in-js
-function throttle(func, delay=500) {
-  //console.log("throttle :D:D:D");
-  let timeout = null;
-  return function() {
-    if (!timeout) {
-      timeout = setTimeout(() => {
-        func.call();
-        timeout = null;
-      }, delay);
-    }
-  }
-}
 
 function check_sel_active(topics) {
   for (const topic of topics) {
     if (topic.active) return true;
   }
   return false;
-}
-
-const entrytypes = {
-  unknown: {
-    label: 'Autodetect',
-    class: 'unkn'
-  },
-  pending: {
-    label: 'detecting...',
-    class: 'pend'
-  },
-  note: {
-    label: 'Note',
-    class: 'note'
-  },
-  link: {
-    label: 'Link',
-    class: 'link'
-  },
-};
-
-const linktypes = {
-  none: {
-    label: '',
-    title: '',
-    class: ''
-  },
-  pending: {
-    label: 'getting url info...',
-    title: '',
-    class: ''
-  },
-  error: {
-    label: 'broken link :(',
-    title: '',
-    class: 'brokenlink'
-  },
-  success: {
-    label: '',
-    title: '',
-    class: 'goodlink'
-  }
-}
-
-async function get_link_type(url) {
-  // make this one functional
-  const url_info = await api_req_get(url_info_url + '?url=' + encodeURIComponent(url),
-    auth.get_auth_header());
-  let link_type;
-  if (url_info.success) {
-    link_type = { ...linktypes.success };
-    link_type.label = url_info.cont_type;
-    link_type.title = url_info.title;
-  } else {
-    link_type = { ...linktypes.error };
-    link_type.title = url_info.err_msg;
-  }
-  return link_type;
 }
 
 const event_created = new CustomEvent('created', {
@@ -170,46 +59,18 @@ class CreateEntry extends HTMLElement {
     super();
     this.attachShadow({mode: 'open'});
 
-    this.reset_types();
-    this.input_err = "";
-    this.update();
-    // setup type detection
-    const detect_type_throttled = throttle(() => this.detect_type(), 1000);
-    this.textinput_el = this.shadowRoot.querySelector('#new-entry');
-    this.textinput_el.oninput = () => {
-      this.detect_type_pending();
-      detect_type_throttled();
-    }
-  }
-  reset_types() {
-    this.detected_type = entrytypes.unknown;
-    this.link_type = linktypes.none;
-  }
-  detect_type_pending() {
-    this.input_err = "";
-    this.detected_type = entrytypes.pending;
-    this.link_type = linktypes.none;
+    this.detected_type = "";
     this.update();
   }
-  async detect_type() {
-    // detect inputtype (throttled!)
-    console.log(this.textinput_el.value);
-    const val = this.textinput_el.value;
-    if (val.startsWith('http://') || val.startsWith('https://')) {
-      this.detected_type = entrytypes.link;
-      this.link_type = linktypes.pending;
-      this.update();
-      this.link_type = await get_link_type(val);
-    } else if (val == '') {
-      this.reset_types();
-    } else {
-      this.detected_type = entrytypes.note;
-      this.link_type = linktypes.none;
-    }
-    this.update();
+  get activeTopics() {
+    return this._activeTopics || [];
+  }
+  set activeTopics(v) {
+    this._activeTopics = v;
   }
   async submit() {
     console.log("submitting...");
+    /*
     // check detection status
     if (this.detected_type === entrytypes.unknown) {
       this.input_err = "Couldn't determine input...";
@@ -247,10 +108,10 @@ class CreateEntry extends HTMLElement {
       this.update();
     } else {
       this.input_err = "Error creating entry... :(";
-    }
+    }*/
   }
-  template_get_overlay() {
-    if (this.detected_type !== entrytypes.unknown &&
+  template_get_selection() {
+    /*if (this.detected_type !== entrytypes.unknown &&
         this.detected_type !== entrytypes.pending) {
       if (this.detected_type === entrytypes.link) {
         return html`
@@ -260,34 +121,28 @@ class CreateEntry extends HTMLElement {
                           placeholder="Add a comment..."></text-input>
             </div>
             <br>
-            <main-menu></main-menu>
+            <topics-list></topics-list>
+            <subtags-list></subtags-list>
           </div>`;
-      } else {
+      } else {*/
         return html`<div id="input-overlay">
-            <main-menu></main-menu>
+            <topics-list .activeTopics=${this.activeTopics}
+              @selectionchanged=${(e)=>{this.activeTopics=e.detail}}></topics-list>
+            <subtags-list></subtags-list>
           </div>`;
-      }
-    } else { return html``; }
+    /*  }
+  } else { return html``; }*/
   }
   update() {
-    const overlay = this.template_get_overlay();
+    const selection = this.template_get_selection();
     render(html`${style}
       <div>
-        <text-input id="new-entry" size="25" class="inline"
-                    placeholder="New Entry..."></text-input>
+        <input-entry class="inline"></input-entry>
         <labelled-button class="inline"
                          @click=${()=>this.submit()} label="Create"></labelled-button>
       </div>
-      ${ this.input_err != "" ?
-        html`<small id="input-err">${this.input_err}</small>` :
-        html`` }
-      <small id="new-entry-typedet">Type:
-        <span id="new-entry-type" class="${this.detected_type.class}">${this.detected_type.label}</span>
-        <span id="link-type-label" class="${this.link_type.class}">${this.link_type.label}</span>
-        <span id="link-type-title">${this.link_type.title}</span>
-      </small>
       <div id="input-overlay-fix">
-        ${overlay}
+        ${selection}
       </div>
       `, this.shadowRoot);
   }
