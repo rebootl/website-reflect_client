@@ -4,8 +4,8 @@ import { entries_url } from './urls.js';
 import { api_req_get } from './api_request_helpers.js';
 import { global_state } from './global_state.js';
 import auth from './auth.js';
-import './list-entry.js';
-import './create-entry.js';
+import './entry-item.js';
+import './entry-create-new.js';
 
 const style = html`
   <style>
@@ -21,7 +21,7 @@ const style = html`
   </style>
 `;
 
-class ListedEntries extends HTMLElement {
+class ViewEntries extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -52,7 +52,7 @@ class ListedEntries extends HTMLElement {
     //console.log(this.entries_obj.entries);
     render(html`${style}
       ${ global_state.user.logged_in ?
-        html`<create-entry @created="${()=>this.state_update()}"></create-entry>` :
+        html`<entry-create-new @created="${()=>this.state_update()}"></entry-create-new>` :
         html`` }
       <ul id="entries-list">
         ${repeat(this.entries_obj.entries, entry => entry.id, entry => html`
@@ -61,4 +61,4 @@ class ListedEntries extends HTMLElement {
   }
 }
 
-customElements.define('listed-entries', ListedEntries);
+customElements.define('view-entries', ViewEntries);

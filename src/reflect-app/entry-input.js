@@ -3,7 +3,6 @@ import './gen-elements/text-input.js';
 import { api_req_get, api_req_post } from './api_request_helpers.js';
 import { url_info_url, entries_url } from './urls.js';
 import auth from './auth.js';
-import './main-menu.js';
 
 const style = html`
   <style>
@@ -139,7 +138,7 @@ const event_created = new CustomEvent('typedetected', {
   bubbles: true,
 });
 
-class InputEntry extends HTMLElement {
+class EntryInput extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -204,4 +203,4 @@ class InputEntry extends HTMLElement {
   }
 }
 
-customElements.define('input-entry', InputEntry);
+customElements.define('entry-input', EntryInput);

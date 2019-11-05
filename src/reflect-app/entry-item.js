@@ -53,7 +53,7 @@ const style = html`
   </style>
 `;
 
-class ListEntry extends HTMLElement {
+class EntryItem extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -93,4 +93,4 @@ class ListEntry extends HTMLElement {
   }
 }
 
-customElements.define('list-entry', ListEntry);
+customElements.define('entry-item', EntryItem);

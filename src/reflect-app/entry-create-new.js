@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
 import './gen-elements/text-input.js';
-import './input-entry.js';
+import './entry-input.js';
 import { api_req_get, api_req_post } from './api_request_helpers.js';
 import { url_info_url, entries_url } from './urls.js';
 import { myrouter } from './router.js';
@@ -54,7 +54,7 @@ const event_created = new CustomEvent('created', {
   bubbles: true,
 });
 
-class CreateEntry extends HTMLElement {
+class EntryCreateNew extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -148,4 +148,4 @@ class CreateEntry extends HTMLElement {
   }
 }
 
-customElements.define('create-entry', CreateEntry);
+customElements.define('entry-create-new', EntryCreateNew);
