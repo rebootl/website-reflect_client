@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
 import { myrouter } from './router.js';
-import './menuentry-subtag.js';
+import './subtag-item.js';
 import { api, create_example_data } from './api-service.js';
 import { observableList } from './observableList';
 
@@ -103,10 +103,10 @@ class SubtagsList extends HTMLElement {
           ${observableList(
               this.subtags,
               (v, i) => html`<li>
-                <menuentry-subtag class="${ v.selected ?
+                <subtag-item class="${ v.selected ?
                   'active' : ''}" @click="${() => this.toggle_topic(v.name)}">
                   ${v.name}
-                </menuentry-subtag>
+                </subtag-item>
               </li>`,
               html`<pre>loading...</pre>`
             )}

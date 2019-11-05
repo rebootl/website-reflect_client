@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html';
-import './menuentry-topic.js';
+import './topic-item.js';
 import { api, create_example_data } from './api-service.js';
 import { observableList } from './observableList';
 
@@ -75,10 +75,10 @@ class TopicsList extends HTMLElement {
           ${observableList(
               this.topics,
               (v, i) => html`<li>
-                <menuentry-topic class="${ v.selected ?
+                <topic-item class="${ v.selected ?
                   'active' : ''}" @click="${() => this.toggle_topic(v.name)}">
                   ${v.name}
-                </menuentry-topic>
+                </topic-item>
               </li>`,
               html`<pre>loading...</pre>`
             )}
