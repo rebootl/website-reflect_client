@@ -20,14 +20,22 @@ const style = html`
 `;
 
 class LabelledButton extends HTMLElement {
+  static get observedAttributes() {return ['disabled']}
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
+  }
+  connectedCallback() {
+    this.update();
+  }
+  attributeChangedCallback() {
     this.update();
   }
   update() {
     render(html`${style}
-        <button>${this.getAttribute('label')}</button>`
+        <button ?disable=${this.getAttribute('disabled')}>
+          ${this.getAttribute('label') || html`<slot />`}
+        </button>`
       , this.shadowRoot);
   }
 }
