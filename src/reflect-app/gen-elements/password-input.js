@@ -19,18 +19,25 @@ const style = html`
 `;
 
 class PasswordInput extends HTMLElement {
+  get value() {
+    return this._value || "";
+  }
+  set value(v) {
+    this._value = v;
+    this.dispatchEvent(new CustomEvent('input'));
+  }
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-    this.update();
   }
-  get value() {
-    return this.shadowRoot.querySelector('input').value;
+  connectedCallback() {
+    this.update();
   }
   update() {
     render(html`${style}
       <input id="${this.getAttribute('id')}" type="password" size="10"
-             placeholder="${this.getAttribute('placeholder')}">`
+        @input=${(e)=>this.value=e.target.value}
+        placeholder="${this.getAttribute('placeholder')}">`
       , this.shadowRoot);
   }
 }

@@ -20,25 +20,30 @@ const style = html`
 `;
 
 class TextInput extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({mode: 'open'});
-    this.update();
-  }
   get value() {
-    return this.shadowRoot.querySelector('input').value;
+    return this._value || "";
   }
   set value(v) {
-    this.shadowRoot.querySelector('input').value = v;
+    this._value = v;
+    this.dispatchEvent(new CustomEvent('input'));
   }
   get size() {
     if (!this.getAttribute('size')) return 10;
     else return this.getAttribute('size');
   }
+  constructor() {
+    super();
+    this.attachShadow({mode: 'open'});
+  }
+  connectedCallback() {
+    this.update();
+  }
   update() {
-    render(html`${style}
+    render(html`
+      ${style}
       <input id="${this.getAttribute('id')}" type="text" size="${this.size}"
-             placeholder="${this.getAttribute('placeholder')}">`
+        @input=${(e)=>this.value=e.target.value}
+        placeholder="${this.getAttribute('placeholder')}">`
       , this.shadowRoot);
   }
 }
