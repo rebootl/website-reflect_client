@@ -143,6 +143,28 @@ class EntryInput extends HTMLElement {
     })();
     this.detectPending = true;
   }
+  getTypeDetect() {
+    if (this.result.detection === 'typing')
+      return html`<span id="type">typing...</span>`;
+    if (this.result.type === 'link' && this.result.detection === 'pending') {
+      return html`<span id="type" class="link">Link</span>
+                  <span id="link-info">getting URL info...</span>`;
+    }
+    if (this.result.type === 'link' && this.result.detection === 'complete') {
+      if (this.result.success) {
+        return html`<span id="type" class="link">Link</span>
+                    <span id="link-info" class="goodlink">${this.result.linkInfo}</span>
+                    <span id="link-title">${this.result.linkTitle}</span>`;
+      } else {
+        return html`<span id="type" class="link">Link</span>
+                    <span id="link-info" class="brokenlink">broken link :(</span>
+                    <span id="link-title">${this.result.errorMessage}</span>`;
+      }
+    }
+    if (this.result.type === 'note')
+      return html`<span id="type" class="note">Note</span>`;
+    return html`<span id="type">Autodetect</span>`;
+  }
   update() {
     console.log(this.result);
 
@@ -150,57 +172,7 @@ class EntryInput extends HTMLElement {
       active: this.result.type === 'link',
     }
 
-    let typeDetect = html`<span id="type">Autodetect</span>`;
-    if (this.result.detection === 'typing') {
-      typeDetect = html`<span id="type">typing...</span>`;
-    }
-    else if (this.result.type === 'link' && this.result.detection === 'pending') {
-      typeDetect = html`<span id="type" class="link">Link</span>
-                        <span id="link-info">getting URL info...</span>`;
-    }
-    else if (this.result.type === 'link' && this.result.detection === 'complete') {
-      if (this.result.success) {
-        typeDetect = html`<span id="type" class="link">Link</span>
-                          <span id="link-info" class="goodlink">${this.result.linkInfo}</span>
-                          <span id="link-title">${this.result.linkTitle}</span>`;
-      } else {
-        typeDetect = html`<span id="type" class="link">Link</span>
-                          <span id="link-info" class="brokenlink">broken link :(</span>
-                          <span id="link-title">${this.result.errorMessage}</span>`;
-      }
-    }
-    else if (this.result.type === 'note') {
-      typeDetect = html`<span id="type" class="note">Note</span>`;
-    }
-
-    /*
-    let typeText = "Autodetect";
-    let typeClass = "";
-    let linkTitle = "";
-    let linkClass = "";
-    let linkInfo = "";
-    if (this.result.detection === 'typing') {
-      typeText = "typing...";
-    } else if (this.result.type === 'link' && this.result.detection === 'pending') {
-      typeText = "Link";
-      typeClass = "link";
-      linkTitle = "getting URL info...";
-    } else if (this.result.type === 'link' && this.result.detection === 'complete') {
-      typeText = "Link";
-      typeClass = "link";
-      if (this.result.success) {
-        linkTitle = this.result.linkTitle;
-        linkInfo = this.result.linkInfo;
-        linkClass = 'goodlink';
-      } else {
-        linkInfo = "broken link :(";
-        linkClass = 'brokenlink';
-      }
-    } else if (this.result.type === 'note') {
-      typeText = "Note";
-      typeClass = "note";
-    }
-    */
+    const typeDetect = this.getTypeDetect();
 
     render(html`${style}
       <text-input id="entry-input" size="25" class="inline"
@@ -214,12 +186,6 @@ class EntryInput extends HTMLElement {
       `, this.shadowRoot);
       //@input=${(e)=>this.detectThrottled(e.target.value.trim())}
       //@input=${(e)=>this.triggerDetect(e.target.value.trim())}
-      //        ${typeDetect}
-      /*
-      <span id="type" class="${typeClass}">${typeText}</span>
-      <span id="link-info" class="${linkClass}">${linkInfo}</span>
-      <span id="link-title">${linkTitle}</span>
-      */
   }
 }
 
