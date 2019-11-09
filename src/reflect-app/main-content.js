@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
 import { myrouter } from './router.js';
-import './listed-entries.js';
+import './view-entries.js';
 
 const style = html`
   <style>
@@ -15,7 +15,7 @@ const style = html`
 `;
 
 const routes = {
-  'entries': (url_state_obj) => html`<listed-entries .url_state_obj=${url_state_obj}></listed-entries>`,
+  'entries': (url_state_obj) => html`<view-entries .url_state_obj=${url_state_obj}></view-entries>`,
   //'add-entry': (a) => html`<add-entry></add-entry>`,
   'edit-entry': (a) => html`<edit-entry></edit-entry>`,
   //'edit-topic': (a) => html`<edit-topic></edit-topic>`,

@@ -56,7 +56,7 @@ class ViewEntries extends HTMLElement {
         html`` }
       <ul id="entries-list">
         ${repeat(this.entries_obj.entries, entry => entry.id, entry => html`
-        <li><list-entry .entry=${entry}></list-entry></li>`)}
+        <li><entry-item .entry=${entry}></entry-item></li>`)}
       </ul>`, this.shadowRoot);
   }
 }
