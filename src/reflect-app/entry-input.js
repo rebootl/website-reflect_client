@@ -109,7 +109,7 @@ class EntryInput extends HTMLElement {
   }
   connectedCallback() {
     this.update();
-    this.detectThrottled = throttle((v)=>{this.detect(v)}, 1000);
+    //this.detectThrottled = throttle((v)=>{this.detect(v)}, 1000);
     /*
     (v) => {
       this.result = {text: v, detection: 'typing'};
@@ -117,8 +117,8 @@ class EntryInput extends HTMLElement {
       throttle(()=>{this.detect(v)}, 1000);
     }*/
   }
-  async detect() {
-    const text = this.shadowRoot.querySelector('#entry-input').value;
+  async detect(text) {
+    //const text = this.shadowRoot.querySelector('#entry-input').value;
     console.log("triggered detect");
     try {
       const url = new URL(text); // this should throw if not a url
@@ -150,30 +150,30 @@ class EntryInput extends HTMLElement {
       active: this.result.type === 'link',
     }
 
-    /*
     let typeDetect = html`<span id="type">Autodetect</span>`;
     if (this.result.detection === 'typing') {
       typeDetect = html`<span id="type">typing...</span>`;
-    } else if (this.result.type === 'link' && this.result.detection === 'pending') {
+    }
+    else if (this.result.type === 'link' && this.result.detection === 'pending') {
       typeDetect = html`<span id="type" class="link">Link</span>
-        <span id="link-info">getting URL info...</span>`;
-    } else if (this.result.type === 'link' && this.result.detection === 'complete') {
-      typeText = "Link";
-      typeClass = "link";
+                        <span id="link-info">getting URL info...</span>`;
+    }
+    else if (this.result.type === 'link' && this.result.detection === 'complete') {
       if (this.result.success) {
         typeDetect = html`<span id="type" class="link">Link</span>
-          <span id="link-info" class="goodlink">${this.result.linkInfo}</span>
-          <span id="link-title">${this.result.linkTitle}</span>`;
+                          <span id="link-info" class="goodlink">${this.result.linkInfo}</span>
+                          <span id="link-title">${this.result.linkTitle}</span>`;
       } else {
         typeDetect = html`<span id="type" class="link">Link</span>
-          <span id="link-info" class="brokenlink">broken link :(</span>
-          <span id="link-title">${this.result.errorMessage}</span>`;
+                          <span id="link-info" class="brokenlink">broken link :(</span>
+                          <span id="link-title">${this.result.errorMessage}</span>`;
       }
-    } else if (this.result.type === 'note') {
+    }
+    else if (this.result.type === 'note') {
       typeDetect = html`<span id="type" class="note">Note</span>`;
-    }*/
+    }
 
-
+    /*
     let typeText = "Autodetect";
     let typeClass = "";
     let linkTitle = "";
@@ -200,24 +200,26 @@ class EntryInput extends HTMLElement {
       typeText = "Note";
       typeClass = "note";
     }
+    */
 
     render(html`${style}
       <text-input id="entry-input" size="25" class="inline"
-        @input=${(e)=>this.detectThrottled(e.target.value.trim())}
-        placeholder="New Entry..."></text-input>
+                  @input=${(e)=>this.triggerDetect(e.target.value.trim())}
+                  placeholder="New Entry..."></text-input>
       <small id="type-detection">Type:
-
-        <span id="type" class="${typeClass}">${typeText}</span>
-        <span id="link-info" class="${linkClass}">${linkText}</span>
-        <span id="link-title">${linkInfo}</span>
+        ${typeDetect}
       </small>
       <text-input id="comment" size="25" class=${classMap(commentClasses)}
-        placeholder="Add a comment..."></text-input>
+                  placeholder="Add a comment..."></text-input>
       `, this.shadowRoot);
-      //        ${typeDetect}
       //@input=${(e)=>this.detectThrottled(e.target.value.trim())}
       //@input=${(e)=>this.triggerDetect(e.target.value.trim())}
-
+      //        ${typeDetect}
+      /*
+      <span id="type" class="${typeClass}">${typeText}</span>
+      <span id="link-info" class="${linkClass}">${linkInfo}</span>
+      <span id="link-title">${linkTitle}</span>
+      */
   }
 }
 
