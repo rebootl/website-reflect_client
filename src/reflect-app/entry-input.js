@@ -1,7 +1,9 @@
 import { html, render } from 'lit-html';
+import { classMap } from 'lit-html/directives/class-map.js';
 import './gen-elements/text-input.js';
 import { api_req_get, api_req_post } from './api_request_helpers.js';
 import { url_info_url, entries_url } from './urls.js';
+import { global_state } from './global_state.js';
 import auth from './auth.js';
 
 const style = html`
@@ -19,29 +21,29 @@ const style = html`
     .inline {
       display: inline-block;
     }
-    #new-entry-typedet {
+    #type-detection {
       display: block;
-      padding: 10px 0 0 10px;
+      padding: 10px 0 10px 10px;
       color: var(--light-text-low-emph);
     }
-    #new-entry-type {
+    #type {
       color: var(--light-text-low-emph);
       border-radius: 3px;
       padding: 2px;
     }
-    #new-entry-type.pend {
+    #type.pend {
       /*color: var(--light-text-med-emph);*/
     }
-    #new-entry-type.note {
+    #type.note {
       color: var(--background);
       color: #000;
       background-color: var(--light-text-med-emph);
     }
-    #new-entry-type.link {
+    #type.link {
       color: var(--on-primary);
       background-color: var(--primary);
     }
-    #link-type-label {
+    #link-info {
       border-radius: 3px;
       padding: 2px;
     }
@@ -59,11 +61,17 @@ const style = html`
       padding-left: 15px;
       padding-top: 5px;
     }
+    #comment {
+      display: none;
+    }
+    #comment.active {
+      display: block;
+    }
   </style>
 `;
 
 // adapted from: https://stackoverflow.com/questions/27078285/simple-throttle-in-js
-function throttle(func, delay=500) {
+function throttle(func, delay=1000) {
   //console.log("throttle :D:D:D");
   let timeout = null;
   return function() {
@@ -76,130 +84,111 @@ function throttle(func, delay=500) {
   }
 }
 
-const entrytypes = {
-  unknown: {
-    label: 'Autodetect',
-    class: 'unkn'
-  },
-  pending: {
-    label: 'detecting...',
-    class: 'pend'
-  },
-  note: {
-    label: 'Note',
-    class: 'note'
-  },
-  link: {
-    label: 'Link',
-    class: 'link'
-  },
-};
-
-const linktypes = {
-  none: {
-    label: '',
-    title: '',
-    class: ''
-  },
-  pending: {
-    label: 'getting url info...',
-    title: '',
-    class: ''
-  },
-  error: {
-    label: 'broken link :(',
-    title: '',
-    class: 'brokenlink'
-  },
-  success: {
-    label: '',
-    title: '',
-    class: 'goodlink'
-  }
-}
-
-async function get_link_type(url) {
-  // make this one functional
+async function getUrlInfo(url) {
   const url_info = await api_req_get(url_info_url + '?url=' + encodeURIComponent(url),
     auth.get_auth_header());
-  let link_type;
   if (url_info.success) {
-    link_type = { ...linktypes.success };
-    link_type.label = url_info.cont_type;
-    link_type.title = url_info.title;
+    return {success: true, linkInfo: url_info.cont_type, linkTitle: url_info.title};
   } else {
-    link_type = { ...linktypes.error };
-    link_type.title = url_info.err_msg;
+    return {success: false, linkInfo: url_info.cont_type, linkTitle: url_info.title};
   }
-  return link_type;
 }
 
-const event_created = new CustomEvent('typedetected', {
-  bubbles: true,
-});
-
 class EntryInput extends HTMLElement {
+  get result() {
+    return this._result || {text: '', detection: 'inital'};
+  }
+  set result(v) {
+    this._result = v;
+    this.dispatchEvent(new CustomEvent('change', {detail: this.result}));
+    this.update();
+  }
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-
-    this.reset_types();
-    this.input_err = "";
+  }
+  connectedCallback() {
     this.update();
-    // setup type detection
-    const detect_type_throttled = throttle(() => this.detect_type(), 1000);
-    this.textinput_el = this.shadowRoot.querySelector('#new-entry');
-    this.textinput_el.oninput = () => {
-      this.detect_type_pending();
-      detect_type_throttled();
-    }
-  }
-  get activeTopics() {
-    return this._activeTopics || [];
-  }
-  set activeTopics(v) {
-    this._activeTopics = v;
-  }
-  reset_types() {
-    this.detected_type = entrytypes.unknown;
-    this.link_type = linktypes.none;
-  }
-  detect_type_pending() {
-    this.input_err = "";
-    this.detected_type = entrytypes.pending;
-    this.link_type = linktypes.none;
-    this.update();
-  }
-  async detect_type() {
-    // detect inputtype (throttled!)
-    console.log(this.textinput_el.value);
-    const val = this.textinput_el.value;
-    if (val.startsWith('http://') || val.startsWith('https://')) {
-      this.detected_type = entrytypes.link;
-      this.link_type = linktypes.pending;
+    //this.detectThrottled = throttle((v)=>{this.detect(v)}, 1000);
+    /*
+    (v) => {
+      this.result = {text: v, detection: 'typing'};
       this.update();
-      this.link_type = await get_link_type(val);
-    } else if (val == '') {
-      this.reset_types();
-    } else {
-      this.detected_type = entrytypes.note;
-      this.link_type = linktypes.none;
+      throttle(()=>{this.detect(v)}, 1000);
+    }*/
+  }
+  async detect(text) {
+    //const text = this.shadowRoot.querySelector('#entry-input').value;
+    console.log("triggered detect");
+    try {
+      const url = new URL(text); // this should throw if not a url
+      this.result = {text: text, detection: 'pending', type: 'link'};
+      const res = await getUrlInfo(url)
+      this.result = {text: text, detection: 'complete', type: 'link', ...res};
+    } catch(e) {
+      this.result = text ?
+        {text: text, detection: 'complete', type: 'note'} :
+        undefined;
     }
-    this.update();
+  }
+  triggerDetect(text) {
+    console.log("triggered");
+    this.text = text;
+    if (this.detectPending) return;
+    this.detectQueue = (async ()=>{
+      await this.detectQueue;
+      this.detectPending = false;
+      await this.detect(this.text);
+    })();
+    this.detectPending = true;
   }
   update() {
+    console.log(this.result);
+
+    const commentClasses = {
+      active: this.result.type === 'link',
+    }
+
+    let typeText = "Autodetect";
+    let typeClass = "";
+    let linkTitle = "";
+    let linkClass = "";
+    let linkInfo = "";
+    if (this.result.detection === 'typing') {
+      typeText = "typing...";
+    } else if (this.result.type === 'link' && this.result.detection === 'pending') {
+      typeText = "Link";
+      typeClass = "link";
+      linkTitle = "getting URL info...";
+    } else if (this.result.type === 'link' && this.result.detection === 'complete') {
+      typeText = "Link";
+      typeClass = "link";
+      if (this.result.success) {
+        linkTitle = this.result.linkTitle;
+        linkInfo = this.result.linkInfo;
+        linkClass = 'goodlink';
+      } else {
+        linkInfo = "broken link :(";
+        linkClass = 'brokenlink';
+      }
+    } else if (this.result.type === 'note') {
+      typeText = "Note";
+      typeClass = "note";
+    }
+
     render(html`${style}
-      <text-input id="new-entry" size="25" class="inline"
-                  placeholder="New Entry..."></text-input>
-      ${ this.input_err != "" ?
-        html`<small id="input-err">${this.input_err}</small>` :
-        html`` }
-      <small id="new-entry-typedet">Type:
-        <span id="new-entry-type" class="${this.detected_type.class}">${this.detected_type.label}</span>
-        <span id="link-type-label" class="${this.link_type.class}">${this.link_type.label}</span>
-        <span id="link-type-title">${this.link_type.title}</span>
+      <text-input id="entry-input" size="25" class="inline"
+        @input=${(e)=>this.triggerDetect(e.target.value.trim())}
+        placeholder="New Entry..."></text-input>
+      <small id="type-detection">Type:
+        <span id="type" class="${typeClass}">${typeText}</span>
+        <span id="link-info" class="${linkClass}">${linkInfo}</span>
+        <span id="link-title">${linkTitle}</span>
       </small>
+      <text-input id="comment" size="25" class=${classMap(commentClasses)}
+        placeholder="Add a comment..."></text-input>
       `, this.shadowRoot);
+      //@input=${(e)=>this.detectThrottled(e.target.value.trim())}
   }
 }
 

@@ -59,7 +59,9 @@ class EntryCreateNew extends HTMLElement {
     super();
     this.attachShadow({mode: 'open'});
 
-    this.detected_type = "";
+    //this.detected_type = "";
+    //this.inputData = {};
+    this.inputHint = "";
     this.update();
   }
   get activeTopics() {
@@ -70,18 +72,21 @@ class EntryCreateNew extends HTMLElement {
   }
   async submit() {
     console.log("submitting...");
-    /*
     // check detection status
-    if (this.detected_type === entrytypes.unknown) {
-      this.input_err = "Couldn't determine input...";
+    console.log("input data:", this.inputData);
+    if (!this.inputData) {
+      this.inputHint = "no input data found...";
       this.update();
-      return;
-    } else if (this.detected_type === entrytypes.pending) {
-      this.input_err = "Input detection pending, please retry...";
-      this.update();
+      console.log("empty obj.");
       return;
     }
-    const topics = this.shadowRoot.querySelector('main-menu').topics;
+    if (!this.inputData.ready) {
+      this.inputHint = this.inputData.detectedType.hint;
+      this.update();
+      console.log("not ready");
+      return;
+    }
+    /*const topics = this.shadowRoot.querySelector('main-menu').topics;
     //console.log(topics);
     if (!check_sel_active(topics)) {
       this.input_err = "At least one topic must be selected...";
@@ -110,39 +115,26 @@ class EntryCreateNew extends HTMLElement {
       this.input_err = "Error creating entry... :(";
     }*/
   }
-  template_get_selection() {
-    /*if (this.detected_type !== entrytypes.unknown &&
-        this.detected_type !== entrytypes.pending) {
-      if (this.detected_type === entrytypes.link) {
-        return html`
-          <div id="input-overlay">
-            <div class="overlay">
-              <text-input id="comment" size="25"
-                          placeholder="Add a comment..."></text-input>
-            </div>
-            <br>
-            <topics-list></topics-list>
-            <subtags-list></subtags-list>
-          </div>`;
-      } else {*/
-        return html`<div id="input-overlay">
-            <topics-list .activeTopics=${this.activeTopics}
-              @selectionchanged=${(e)=>{this.activeTopics=e.detail}}></topics-list>
-            <subtags-list></subtags-list>
-          </div>`;
-    /*  }
-  } else { return html``; }*/
+  detectUpdate(detail) {
+    this.inputData = detail;
+
+    this.update();
   }
   update() {
-    const selection = this.template_get_selection();
     render(html`${style}
       <div>
-        <input-entry class="inline"></input-entry>
+        <entry-input class="inline"
+          @typedetected=${(e)=>this.detectUpdate(e.detail)}></entry-input>
         <labelled-button class="inline"
                          @click=${()=>this.submit()} label="Create"></labelled-button>
+       ${ this.inputHint != "" ?
+          html`<small id="input-err">${this.inputHint}</small>` :
+          html`` }
       </div>
-      <div id="input-overlay-fix">
-        ${selection}
+      <div id="input-overlay">
+        <topics-list .activeTopics=${this.activeTopics}
+          @selectionchanged=${(e)=>{this.activeTopics=e.detail}}></topics-list>
+        <subtags-list></subtags-list>
       </div>
       `, this.shadowRoot);
   }
