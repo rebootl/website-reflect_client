@@ -16,11 +16,19 @@ const style = html`
       font-size: 16px;
       cursor: pointer;
     }
+    button:disabled {
+      color: var(--light-text-low-emph);
+      cursor: auto;
+    }
+    .disabled {
+      color: var(--light-text-low-emph);
+      cursor: auto;
+    }
   </style>
 `;
 
 class LabelledButton extends HTMLElement {
-  static get observedAttributes() {return ['disabled']}
+  static get observedAttributes() {return ['disabled', 'disabledstyle']}
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
@@ -33,11 +41,13 @@ class LabelledButton extends HTMLElement {
   }
   update() {
     render(html`${style}
-        <button ?disable=${this.getAttribute('disabled')}>
+        <button ?disabled=${this.hasAttribute('disabled')}
+          class=${this.hasAttribute('disabledstyle')?'disabled':''}>
           ${this.getAttribute('label') || html`<slot />`}
         </button>`
       , this.shadowRoot);
   }
+  //class=${this.hasAttribute('disabled') ? 'disabled' : ''}
 }
 
 customElements.define('labelled-button', LabelledButton);
