@@ -48,13 +48,6 @@ const style = html`
   </style>
 `;
 
-function check_sel_active(topics) {
-  for (const topic of topics) {
-    if (topic.active) return true;
-  }
-  return false;
-}
-
 const event_created = new CustomEvent('created', {
   bubbles: true,
 });
@@ -102,7 +95,6 @@ class EntryCreateNew extends HTMLElement {
 
   }
   getHint() {
-    if (this.valid || this.entry.detection === 'initial') return html``;
     if (this.entry.detection !== 'complete')
       return html`<small class="hint">entry input incomplete...</small>`;
     if (this.activeTopics.length < 1)
@@ -115,7 +107,7 @@ class EntryCreateNew extends HTMLElement {
                      @change=${(e)=>this.entry = e.detail}></entry-input>
         <labelled-button class="inline" ?disabledstyle=${!this.valid}
                          @click=${()=>this.submit()} label="Create"></labelled-button>
-        ${this.showHint ? html`${this.getHint()}` : html``}
+        ${this.showHint ? this.getHint() : html``}
       </div>
       <div id="input-overlay">
         <topics-list .activeTopics=${this.activeTopics}

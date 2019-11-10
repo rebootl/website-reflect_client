@@ -119,7 +119,7 @@ class EntryInput extends HTMLElement {
   }
   async detect(text) {
     //const text = this.shadowRoot.querySelector('#entry-input').value;
-    console.log("triggered detect");
+    //console.log("triggered detect");
     try {
       const url = new URL(text); // this should throw if not a url
       this.result = {text: text, detection: 'pending', type: 'link'};
@@ -133,7 +133,7 @@ class EntryInput extends HTMLElement {
   }
   triggerDetect(text) {
     // (by Luca)
-    console.log("triggered");
+    //console.log("triggered");
     this.text = text;
     if (this.detectPending) return;
     this.detectQueue = (async ()=>{
@@ -166,7 +166,7 @@ class EntryInput extends HTMLElement {
     return html`<span id="type">Autodetect</span>`;
   }
   update() {
-    console.log(this.result);
+    //console.log(this.result);
 
     const commentClasses = {
       active: this.result.type === 'link',
