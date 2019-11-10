@@ -16,6 +16,11 @@ const style = html`
       font-size: 16px;
       color: var(--light-text-med-emph);
     }
+    /* improve focus on firefox (dotted line) */
+    input:focus {
+      outline-style: none;
+      border: 2px solid var(--focus);
+    }
   </style>
 `;
 

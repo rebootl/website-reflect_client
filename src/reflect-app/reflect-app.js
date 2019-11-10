@@ -35,6 +35,8 @@ const style = html`
       --on-background-border: #222;
       --on-surface-line: #333;
 
+      --focus: #2f5077;
+
       /* header */
       --bg-header: #000;
       /* alt. */

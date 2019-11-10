@@ -15,6 +15,14 @@ const style = html`
       font-weight: bold;
       font-size: 16px;
       cursor: pointer;
+      outline: none;
+    }
+    /* improve focus on firefox (dotted line) */
+    button::-moz-focus-inner {
+      border: 0;
+    }
+    button:focus {
+      border: 2px solid var(--focus);
     }
     button:disabled {
       color: var(--light-text-low-emph);
