@@ -11,7 +11,7 @@ const style = html`
     :host {
       display: block;
       box-sizing: border-box;
-      padding: 15px 15px 10px 15px;
+      padding: 15px 15px 0 15px;
       position: relative;
       color: var(--light-text-med-emph);
     }
@@ -96,7 +96,7 @@ async function getUrlInfo(url) {
 
 class EntryInput extends HTMLElement {
   get result() {
-    return this._result || {text: '', detection: 'inital'};
+    return this._result || {text: '', detection: 'initial'};
   }
   set result(v) {
     this._result = v;
@@ -172,14 +172,12 @@ class EntryInput extends HTMLElement {
       active: this.result.type === 'link',
     }
 
-    const typeDetect = this.getTypeDetect();
-
     render(html`${style}
       <text-input id="entry-input" size="25" class="inline"
                   @input=${(e)=>this.triggerDetect(e.target.value.trim())}
                   placeholder="New Entry..."></text-input>
       <small id="type-detection">Type:
-        ${typeDetect}
+        ${this.getTypeDetect()}
       </small>
       <text-input id="comment" size="25" class=${classMap(commentClasses)}
                   placeholder="Add a comment..."></text-input>
