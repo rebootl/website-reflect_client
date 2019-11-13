@@ -8,6 +8,8 @@
 
 * accessibility: topics-list not using keyboard tabs
 
+* make entry input a textarea
+
 ---
 
 * add new-entry input elements
