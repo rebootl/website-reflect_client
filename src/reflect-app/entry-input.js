@@ -86,7 +86,8 @@ function throttle(func, delay=1000) {
 
 async function getUrlInfo(url) {
   const url_info = await api_req_get(url_info_url + '?url=' + encodeURIComponent(url),
-    auth.get_auth_header());
+    auth.get_auth_header())
+    .catch((e)=>({success: false, errorMessage: "request failed..."}));
   if (url_info.success) {
     return {success: true, linkInfo: url_info.cont_type, linkTitle: url_info.title};
   } else {
