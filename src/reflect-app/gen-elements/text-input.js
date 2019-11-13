@@ -3,7 +3,7 @@ import { html, render } from 'lit-html';
 const style = html`
   <style>
     :host {
-      display: block;
+      display: inline-block;
       box-sizing: border-box;
     }
     input {
@@ -43,10 +43,13 @@ class TextInput extends HTMLElement {
   connectedCallback() {
     this.update();
   }
+  reset() {
+    this.shadowRoot.querySelector('input').value = "";
+  }
   update() {
     render(html`
       ${style}
-      <input id="${this.getAttribute('id')}" type="text" size="${this.size}"
+      <input type="text" size=${this.size}
         @input=${(e)=>this.value=e.target.value}
         placeholder="${this.getAttribute('placeholder')}">`
       , this.shadowRoot);

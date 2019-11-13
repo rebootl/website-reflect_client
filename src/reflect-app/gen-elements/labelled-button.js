@@ -3,7 +3,7 @@ import { html, render } from 'lit-html';
 const style = html`
   <style>
     :host {
-      display: block;
+      display: inline-block;
       box-sizing: border-box;
     }
     button {
