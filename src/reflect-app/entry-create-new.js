@@ -1,6 +1,7 @@
 import { html, render } from 'lit-html';
 import './gen-elements/text-input.js';
 import './entry-input.js';
+import './add-items.js';
 import { api_req_get, api_req_post } from './api_request_helpers.js';
 import { url_info_url, entries_url } from './urls.js';
 import { myrouter } from './router.js';
@@ -110,8 +111,10 @@ class EntryCreateNew extends HTMLElement {
         ${this.showHint ? this.getHint() : html``}
       </div>
       <div id="input-overlay">
+        <add-items label="New Topic..."></add-items>
         <topics-list .activeTopics=${this.activeTopics}
-                     @selectionchanged=${(e)=>{this.activeTopics=e.detail}}></topics-list>
+                     @selectionchanged=${(e)=>{this.activeTopics=e.detail}}>
+        </topics-list>
         <subtags-list></subtags-list>
       </div>
       `, this.shadowRoot);
