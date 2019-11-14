@@ -1,12 +1,10 @@
 import { html, render } from 'lit-html';
-import { global_state } from './global_state.js';
 import { myrouter } from './router.js';
 import './topics-list.js';
 import './subtags-list.js';
 import './gen-elements/text-input.js';
 import './gen-elements/labelled-button.js';
-import { api, create_example_data } from './api-service.js';
-import { observableList } from './observableList';
+import { api } from './api-service.js';
 
 const style = html`
   <style>
@@ -47,20 +45,6 @@ class MainMenu extends HTMLElement {
     this.active_subtags = params.subtags || [];
     this.update();
   }
-  async add_topic() {
-    const topic_name = this.shadowRoot.getElementById('add-topic').value;
-    const db = await api.getSource('entries');
-    // -> create a dummy entry containing the topic to add
-    await db.add({
-      "topics": [
-        {
-            "topic": topic_name,
-            "tags": []
-        }
-      ]
-    });
-    //this.update_url();
-  }
   update_url() {
     // generate url
     // format e.g. #entries?select=true&topic_id[]=3&tag_id[]=2&tag_id[]=3
@@ -88,27 +72,7 @@ class MainMenu extends HTMLElement {
     this.update_url();
   }
   update() {
-
-    const add_topic_html = (global_state.user.logged_in) ?
-      html`<li>
-        <text-input id="add-topic" class="inputfield add-topic-tag"
-                    placeholder="New Topic..."></text-input>
-        <labelled-button id="add-topic-button" class="add-topic-tag"
-                         @click=${()=>this.add_topic()}
-                         label="+"></labelled-button>
-      </li>` : html``;
-
-    const add_subtag_html = (global_state.user.logged_in && this.active_topics.length > 0) ?
-      html`<li>
-        <text-input id="add-tag" class="inputfield add-topic-tag"
-                    placeholder="New Tag..."></text-input>
-        <labelled-button id="add-tag-button" class="add-topic-tag"
-                         @click=${()=>this.add_tag()}
-                         label="+"></labelled-button>
-      </li>` : html``;
-
     render(html`${style}
-      ${add_topic_html}
       <topics-list .activeTopics=${this.active_topics}
         @selectionchanged=${(e) => this.updateUrlTopics(e.detail)}></topics-list>
       ${add_subtag_html}
