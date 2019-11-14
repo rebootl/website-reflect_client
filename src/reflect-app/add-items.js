@@ -54,14 +54,22 @@ class AddItems extends HTMLElement {
   update() {
     render(html`${style}
       ${this.newItems.map((t) => html`<item-small>${t}</item-small>
-      <labelled-button @click=${()=>this.remove_topic(t)}
-                       label="-"></labelled-button>`)}
+      <labelled-button @click=${()=>this.remove_topic(t)}>
+        <svg width="1em" height="1em" viewbox="0 0 100 100">
+          <line x1="10"  y1="10" x2="90" y2="90" stroke="currentColor" stroke-width="16px" />
+          <line x1="90"  y1="10" x2="10" y2="90" stroke="currentColor" stroke-width="16px" />
+        </svg>
+      </labelled-button>`)}
       <text-input @input=${(e)=>this.inputValue = e.target.value.trim()}
                   placeholder=${this.getAttribute('label')}></text-input>
       <labelled-button ?disabled=${!this.inputValue}
-                       @click=${()=>this.add_topic()}
-                       label="+"></labelled-button>
-        `,
+                       @click=${()=>this.add_topic()}>
+        <svg width="1em" height="1em" viewbox="0 0 100 100">
+          <line x1="50"  y1="00" x2="50" y2="100" stroke="currentColor" stroke-width="16px" />
+          <line x1="100"  y1="50" x2="0" y2="50" stroke="currentColor" stroke-width="16px" />
+        </svg>
+      </labelled-button>
+      `,
       this.shadowRoot);
   }
 }
