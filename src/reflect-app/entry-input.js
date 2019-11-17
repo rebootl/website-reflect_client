@@ -108,7 +108,11 @@ class EntryInput extends HTMLElement {
     this.dispatchEvent(new CustomEvent('inputchange', {detail: this.result}));
     this.update();
   }
+  get comment() {
+    return this._comment || "";
+  }
   set comment(v) {
+    this._comment = v;
     this.result = {...this.result, comment: v};
   }
   constructor() {
@@ -182,6 +186,12 @@ class EntryInput extends HTMLElement {
     })();
     this.detectPending = true;
   }
+  reset() {
+    this.shadowRoot.querySelector('#entry-text').reset();
+    this.shadowRoot.querySelector('#comment').reset();
+    this.status = 'initial';
+    this.result = {};
+  }
   getTypeDetect() {
     if (this.status.detection === 'typing')
       return html`<span id="type">typing...</span>`;
@@ -211,7 +221,7 @@ class EntryInput extends HTMLElement {
     };
 
     render(html`${style}
-      <text-input id="entry-input" size="25" class="inline"
+      <text-input id="entry-text" size="25" class="inline"
                   @input=${(e)=>this.triggerDetect(e.target.value.trim())}
                   placeholder="New Entry..."></text-input>
       <small id="type-detection">Type:

@@ -110,8 +110,15 @@ class EntryCreate extends HTMLElement {
       topics: [ ...this.activeTopics, ...this.newTopics ],
       tags: [],
     });
-    // -> reset stuff
-    //this.update_url();
+    console.log("created entry!!");
+    // -> return id ?
+    //console.log(e);
+    this.reset();
+  }
+  reset() {
+    this.shadowRoot.querySelector('entry-input').reset();
+    this.shadowRoot.querySelector('add-items').reset();
+    this.shadowRoot.querySelector('topics-list').reset();
   }
   getHint() {
     if (!this.inputReady)

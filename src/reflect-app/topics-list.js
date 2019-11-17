@@ -46,24 +46,31 @@ class TopicsList extends HTMLElement {
     // get topics
     this.topics.query([
       {$unwind: "$topics"},
-      {$group: {_id:"$topics.topic" }},
-      {$sort: {_id: 1}},
+      {$group: {_id: "$topics"}},
       {$project: {
-        _id: -1,
-        name: "$_id",
+        _id: -1, name: "$_id",
         selected: {$in: [
           "$_id",
           this.activeTopics
-        ]}}
-      },
+        ]}
+      }},
+      {$sort: {name: 1}},
     ]);
   }
   toggle_topic(topic_name) {
+    // -> make a setter
     if (this.activeTopics.includes(topic_name)) {
       this.activeTopics.splice(this.activeTopics.indexOf(topic_name), 1);
     } else {
       this.activeTopics.push(topic_name);
     }
+    this.selectionchanged();
+  }
+  reset() {
+    this.activeTopics = [];
+    this.selectionchanged();
+  }
+  selectionchanged() {
     this.dispatchEvent(new CustomEvent('selectionchanged',
       {detail: this.activeTopics}));
     this.update_query();
