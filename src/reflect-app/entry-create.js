@@ -49,7 +49,7 @@ const event_created = new CustomEvent('created', {
   bubbles: true,
 });
 
-class EntryCreateNew extends HTMLElement {
+class EntryCreate extends HTMLElement {
   get activeTopics() {
     return this._activeTopics || [];
   }
@@ -145,4 +145,4 @@ class EntryCreateNew extends HTMLElement {
   //this.activeTopics.length < 1}
 }
 
-customElements.define('entry-create-new', EntryCreateNew);
+customElements.define('entry-create', EntryCreate);

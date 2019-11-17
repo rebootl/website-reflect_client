@@ -5,7 +5,7 @@ import { api_req_get } from './api_request_helpers.js';
 import { global_state } from './global_state.js';
 import auth from './auth.js';
 import './entry-item.js';
-import './entry-create-new.js';
+import './entry-create.js';
 
 const style = html`
   <style>
@@ -52,7 +52,7 @@ class ViewEntries extends HTMLElement {
     //console.log(this.entries_obj.entries);
     render(html`${style}
       ${ global_state.user.logged_in ?
-        html`<entry-create-new @created="${()=>this.state_update()}"></entry-create-new>` :
+        html`<entry-create @created="${()=>this.state_update()}"></entry-create>` :
         html`` }
       <ul id="entries-list">
         ${repeat(this.entries_obj.entries, entry => entry.id, entry => html`
