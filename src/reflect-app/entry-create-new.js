@@ -1,12 +1,8 @@
 import { html, render } from 'lit-html';
+import { api } from './api-service.js';
 import './gen-elements/text-input.js';
 import './entry-input.js';
 import './add-items.js';
-import { api_req_get, api_req_post } from './api_request_helpers.js';
-import { url_info_url, entries_url } from './urls.js';
-import { myrouter } from './router.js';
-import { global_state } from './global_state.js';
-import auth from './auth.js';
 import './main-menu.js';
 
 const style = html`
@@ -62,6 +58,14 @@ class EntryCreateNew extends HTMLElement {
     this.showHint = false;
     this.update();
   }
+  get newTopics() {
+    return this._newTopics || [];
+  }
+  set newTopics(v) {
+    this._newTopics = v;
+    this.showHint = false;
+    this.update();
+  }
   get entry() {
     return this._entry || {};
   }
@@ -70,8 +74,16 @@ class EntryCreateNew extends HTMLElement {
     this.showHint = false;
     this.update();
   }
+  get inputReady() {
+    return this._inputReady || false;
+  }
+  set inputReady(v) {
+    this._inputReady = v;
+    this.update();
+  }
   get valid() {
-    if (this.entry.detection !== 'complete' || this.activeTopics.length < 1)
+    if ((this.activeTopics.length < 1 && this.newTopics.length < 1) ||
+      !this.inputReady)
       return false;
     return true;
   }
@@ -83,7 +95,8 @@ class EntryCreateNew extends HTMLElement {
   connectedCallback() {
     this.update();
   }
-  async submit() {
+  async add_entry() {
+    console.log(this.entry);
     if (!this.valid) {
       this.showHint = true;
       this.update();
@@ -91,34 +104,43 @@ class EntryCreateNew extends HTMLElement {
     }
     this.showHint = false;
     this.update();
-    console.log("submitting...");
-    // check detection status
-
+    const db = await api.getSource('entries');
+    await db.add({
+      ...this.entry,
+      topics: [ ...this.activeTopics, ...this.newTopics ],
+      tags: [],
+    });
+    // -> reset stuff
+    //this.update_url();
   }
   getHint() {
-    if (this.entry.detection !== 'complete')
+    if (!this.inputReady)
       return html`<small class="hint">entry input incomplete...</small>`;
-    if (this.activeTopics.length < 1)
-      return html`<small class="hint">select one or more topics...</small>`;
+    if (this.activeTopics.length < 1 || this.newTopics.length < 1)
+      return html`<small class="hint">select/create one or more topics...</small>`;
   }
   update() {
     render(html`${style}
       <div>
         <entry-input class="inline"
-                     @change=${(e)=>this.entry = e.detail}></entry-input>
+                     @ready=${(e)=>{this.inputReady = e.detail}}
+                     @inputchange=${(e)=>{this.entry = e.detail}}></entry-input>
         <labelled-button class="inline" ?disabledstyle=${!this.valid}
-                         @click=${()=>this.submit()} label="Create"></labelled-button>
+                         @click=${()=>this.add_entry()} label="Create"></labelled-button>
         ${this.showHint ? this.getHint() : html``}
       </div>
       <div id="input-overlay">
-        <add-items label="New Topic..."></add-items>
+        <add-items label="New Topic..."
+                   @itemschanged=${(e)=>{this.newTopics = e.detail}}></add-items>
         <topics-list .activeTopics=${this.activeTopics}
-                     @selectionchanged=${(e)=>{this.activeTopics=e.detail}}>
+                     @selectionchanged=${(e)=>{this.activeTopics = e.detail}}>
         </topics-list>
         <subtags-list></subtags-list>
       </div>
       `, this.shadowRoot);
   }
+  //${(e)=>this.newTopics = e.detail}
+
   //?disabled=${this.entry.detection !== 'complete' ||
   //this.activeTopics.length < 1}
 }

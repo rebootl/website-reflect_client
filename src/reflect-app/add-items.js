@@ -43,12 +43,16 @@ class AddItems extends HTMLElement {
   add_topic() {
     if (this.newItems.includes(this.inputValue)) return;
     this.newItems.push(this.inputValue);
+    this.dispatchEvent(new CustomEvent('itemschanged',
+      {detail: this.newItems}));
     this.inputValue = "";
     this.shadowRoot.querySelector('text-input').reset();
     this.update();
   }
   remove_topic(t) {
     this.newItems = this.newItems.filter((e)=> e !== t );
+    this.dispatchEvent(new CustomEvent('itemschanged',
+      {detail: this.newItems}));
     this.update();
   }
   update() {

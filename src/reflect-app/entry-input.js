@@ -1,7 +1,7 @@
 import { html, render } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
 import './gen-elements/text-input.js';
-import { api_req_get, api_req_post } from './api_request_helpers.js';
+import { api_req_get2, api_req_post } from './api_request_helpers.js';
 import { url_info_url, entries_url } from './urls.js';
 import { global_state } from './global_state.js';
 import auth from './auth.js';
@@ -84,25 +84,32 @@ function throttle(func, delay=1000) {
   }
 }
 
-async function getUrlInfo(url) {
-  const url_info = await api_req_get(url_info_url + '?url=' + encodeURIComponent(url),
-    auth.get_auth_header())
-    .catch((e)=>({success: false, errorMessage: "request failed..."}));
-  if (url_info.success) {
-    return {success: true, linkInfo: url_info.cont_type, linkTitle: url_info.title};
-  } else {
-    return {success: false, errorMessage: url_info.err_msg};
-  }
-}
-
 class EntryInput extends HTMLElement {
+  get ready() {
+    return this._ready || false;
+  }
+  set ready(v) {
+    this._ready = v;
+    this.dispatchEvent(new CustomEvent('ready', {detail: this._ready}));
+  }
+  get status() {
+    return this._status || 'initial';
+  }
+  set status(v) {
+    this._status = v;
+    this.ready = this._status === 'complete' ? true : false;
+    this.update();
+  }
   get result() {
-    return this._result || {text: '', detection: 'initial'};
+    return this._result || {};
   }
   set result(v) {
     this._result = v;
-    this.dispatchEvent(new CustomEvent('change', {detail: this.result}));
+    this.dispatchEvent(new CustomEvent('inputchange', {detail: this.result}));
     this.update();
+  }
+  set comment(v) {
+    this.result = {...this.result, comment: v};
   }
   constructor() {
     super();
@@ -118,19 +125,50 @@ class EntryInput extends HTMLElement {
       throttle(()=>{this.detect(v)}, 1000);
     }*/
   }
+  async setUrlInfo(url) {
+    await api_req_get2(
+      url_info_url + '?url=' + encodeURIComponent(url),
+      auth.get_auth_header()
+    )
+      .then(data=>{
+        this.result = {...this.result, info: data.cont_type, title: data.title};
+        this.status = 'complete';
+      })
+      .catch((e)=>{
+        if (e.code === 'ERESPONSE') {
+          this.result = {...this.result, type: 'brokenlink', info: "broken link :(", title: e.message};
+          this.status = 'complete';
+        } else {
+          this.result = {...this.result, info: "url info request failed...", title: e};
+          this.status = 'complete';
+        }
+      });
+  }
   async detect(text) {
     //const text = this.shadowRoot.querySelector('#entry-input').value;
     //console.log("triggered detect");
+    /*const url = (()=>{try {return new URL(...);} catch (e) {}})();
+    if (url) {
+    } else {
+    }*/
+    let url;
     try {
-      const url = new URL(text); // this should throw if not a url
-      this.result = {text: text, detection: 'pending', type: 'link'};
-      const res = await getUrlInfo(url)
-      this.result = {text: text, detection: 'complete', type: 'link', ...res};
+      url = new URL(text); // this should throw if not a url
     } catch(e) {
-      this.result = text ?
-        {text: text, detection: 'complete', type: 'note'} :
-        undefined;
+      //console.log(e);
+      if (text === "") {
+        this.result = {};
+        this.status = 'initial';
+      } else {
+        this.result = {text: text, type: 'note'};
+        this.status = 'complete';
+      }
+      return;
     }
+    this.status = 'pending';
+    this.result = {url: text, type: 'link'};
+    await this.setUrlInfo(url);
+    //console.log(this.result);
   }
   triggerDetect(text) {
     // (by Luca)
@@ -145,22 +183,21 @@ class EntryInput extends HTMLElement {
     this.detectPending = true;
   }
   getTypeDetect() {
-    if (this.result.detection === 'typing')
+    if (this.status.detection === 'typing')
       return html`<span id="type">typing...</span>`;
-    if (this.result.type === 'link' && this.result.detection === 'pending') {
+    if (this.result.type === 'link' && this.status === 'pending') {
       return html`<span id="type" class="link">Link</span>
                   <span id="link-info">getting URL info...</span>`;
     }
-    if (this.result.type === 'link' && this.result.detection === 'complete') {
-      if (this.result.success) {
-        return html`<span id="type" class="link">Link</span>
-                    <span id="link-info" class="goodlink">${this.result.linkInfo}</span>
-                    <span id="link-title">${this.result.linkTitle}</span>`;
-      } else {
-        return html`<span id="type" class="link">Link</span>
-                    <span id="link-info" class="brokenlink">broken link :(</span>
-                    <span id="link-title">${this.result.errorMessage}</span>`;
+    if ((this.result.type === 'link' || this.result.type === 'brokenlink')
+      && this.status === 'complete') {
+      const linkClass = {
+        goodlink: this.result.type === 'link',
+        brokenlink: this.result.type === 'brokenlink'
       }
+      return html`<span id="type" class="link">Link</span>
+                  <span id="link-info" class=${classMap(linkClass)}>${this.result.info}</span>
+                  <span id="link-title">${this.result.title}</span>`;
     }
     if (this.result.type === 'note')
       return html`<span id="type" class="note">Note</span>`;
@@ -171,7 +208,7 @@ class EntryInput extends HTMLElement {
 
     const commentClasses = {
       active: this.result.type === 'link',
-    }
+    };
 
     render(html`${style}
       <text-input id="entry-input" size="25" class="inline"
@@ -181,6 +218,7 @@ class EntryInput extends HTMLElement {
         ${this.getTypeDetect()}
       </small>
       <text-input id="comment" size="25" class=${classMap(commentClasses)}
+                  @input=${(e)=>{this.comment = e.target.value.trim()}}
                   placeholder="Add a comment..."></text-input>
       `, this.shadowRoot);
       //@input=${(e)=>this.detectThrottled(e.target.value.trim())}

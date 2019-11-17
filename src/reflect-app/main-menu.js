@@ -75,7 +75,6 @@ class MainMenu extends HTMLElement {
     render(html`${style}
       <topics-list .activeTopics=${this.active_topics}
         @selectionchanged=${(e) => this.updateUrlTopics(e.detail)}></topics-list>
-      ${add_subtag_html}
       <subtags-list .activeTopics=${this.active_topics}
         .activeSubtags=${this.active_subtags}
         @selectionchanged=${(e) => this.updateUrlSubtags(e.detail)}></subtags-list>`,
