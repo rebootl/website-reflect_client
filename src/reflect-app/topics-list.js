@@ -71,7 +71,6 @@ class TopicsList extends HTMLElement {
     this.selectionchanged();
   }
   selectionchanged() {
-    console.log(this.activeTopics);
     this.dispatchEvent(new CustomEvent('selectionchanged',
       {detail: this.activeTopics}));
     this.update_query();

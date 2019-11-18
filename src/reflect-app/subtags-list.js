@@ -92,7 +92,6 @@ class SubtagsList extends HTMLElement {
     } else {
       this.activeSubtags.push(name);
     }
-    console.log(this.activeSubtags);
     this.dispatchEvent(new CustomEvent('selectionchanged',
       {detail: this.activeSubtags}));
     //this.update_url();

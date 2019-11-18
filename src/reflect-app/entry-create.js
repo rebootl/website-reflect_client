@@ -66,7 +66,6 @@ class EntryCreate extends HTMLElement {
   }
   set activeTags(v) {
     this._activeTags = v;
-    console.log(v);
     this.update();
   }
   get newTopics() {
