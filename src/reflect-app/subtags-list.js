@@ -1,7 +1,6 @@
 import { html, render } from 'lit-html';
-import { myrouter } from './router.js';
 import './subtag-item.js';
-import { api, create_example_data } from './api-service.js';
+import { api } from './api-service.js';
 import { observableList } from './observableList';
 
 const style = html`
@@ -92,9 +91,16 @@ class SubtagsList extends HTMLElement {
     } else {
       this.activeSubtags.push(name);
     }
+    this.selectionchanged();
+    //this.update_url();
+  }
+  reset() {
+    this.activeSubtags = [];
+    this.selectionchanged();
+  }
+  selectionchanged() {
     this.dispatchEvent(new CustomEvent('selectionchanged',
       {detail: this.activeSubtags}));
-    //this.update_url();
   }
   update() {
     render(html`${style}

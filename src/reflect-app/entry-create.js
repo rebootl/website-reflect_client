@@ -58,6 +58,7 @@ class EntryCreate extends HTMLElement {
   }
   set activeTopics(v) {
     this._activeTopics = v;
+    if (v.length < 1) this.activeTags = [];
     this.showHint = false;
     this.update();
   }
@@ -124,7 +125,7 @@ class EntryCreate extends HTMLElement {
     const entry = {
       ...this.entry,
       topics: [ ...this.activeTopics, ...this.newTopics ],
-      tags: [ ...this.newTags ],
+      tags: [ ...this.activeTags, ...this.newTags ],
     };
     await db.add(entry);
     console.log("created entry!!");
@@ -138,7 +139,7 @@ class EntryCreate extends HTMLElement {
     this.shadowRoot.querySelector('#add-topics').reset();
     this.shadowRoot.querySelector('topics-list').reset();
     this.shadowRoot.querySelector('#add-tags').reset();
-
+    this.shadowRoot.querySelector('subtags-list').reset();
   }
   getHint() {
     if (!this.inputReady)
