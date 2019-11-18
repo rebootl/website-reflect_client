@@ -25,10 +25,6 @@ const style = html`
 `;
 
 class TopicsList extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({mode: 'open'});
-  }
   get activeTopics() {
     return this._activeTopics || [];
   }
@@ -36,6 +32,10 @@ class TopicsList extends HTMLElement {
     if (JSON.stringify(v) === JSON.stringify(this._activeTopics)) return;
     this._activeTopics = v;
     if (this.topics) this.update_query();
+  }
+  constructor() {
+    super();
+    this.attachShadow({mode: 'open'});
   }
   connectedCallback() {
     this.topics = api.observe('entries');
@@ -71,6 +71,7 @@ class TopicsList extends HTMLElement {
     this.selectionchanged();
   }
   selectionchanged() {
+    console.log(this.activeTopics);
     this.dispatchEvent(new CustomEvent('selectionchanged',
       {detail: this.activeTopics}));
     this.update_query();
@@ -82,8 +83,8 @@ class TopicsList extends HTMLElement {
           ${observableList(
               this.topics,
               (v, i) => html`<li>
-                <topic-item class="${ v.selected ?
-                  'active' : ''}" @click="${() => this.toggle_topic(v.name)}">
+                <topic-item class=${ v.selected ? 'active' : ''}
+                            @click=${() => this.toggle_topic(v.name)}>
                   ${v.name}
                 </topic-item>
               </li>`,

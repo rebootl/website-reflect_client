@@ -24,7 +24,7 @@ const style = html`
   #subtags {
   }
   #subtags ul {
-    border-top: 1px solid var(--on-surface-line);
+    -border-top: 1px solid var(--on-surface-line);
     padding: 5px;
     display: flex;
     flex-wrap: wrap;
@@ -37,16 +37,12 @@ const style = html`
 `;
 
 class SubtagsList extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({mode: 'open'});
-  }
   get activeTopics() {
     return this._activeTopics || [];
   }
   set activeTopics(v) {
     this._activeTopics = v;
-    if (this.topics) this.update_query();
+    if (this.subtags) this.update_query();
   }
   get activeSubtags() {
     return this._activeSubtags || [];
@@ -54,6 +50,10 @@ class SubtagsList extends HTMLElement {
   set activeSubtags(v) {
     this._activeSubtags = v;
     if (this.subtags) this.update_query();
+  }
+  constructor() {
+    super();
+    this.attachShadow({mode: 'open'});
   }
   connectedCallback() {
     this.subtags = api.observe('entries');
@@ -65,10 +65,10 @@ class SubtagsList extends HTMLElement {
     this.subtags.query([
       {$unwind: "$topics"},
       {$project: {
-        topic: "$topics.topic",
-        tags: "$topics.tags",
+        topic: "$topics",
+        tags: "$tags",
         selected: {$in: [
-          "$topics.topic",
+          "$topics",
           this.activeTopics
         ]}}
       },
@@ -86,14 +86,15 @@ class SubtagsList extends HTMLElement {
       {$sort: {name: 1}}
     ]);
   }
-  toggle_topic(topic_name) {
-    if (this.activeTopics.includes(topic_name)) {
-      this.activeTopics.splice(this.activeTopics.indexOf(topic_name), 1);
+  toggleSubtag(name) {
+    if (this.activeSubtags.includes(name)) {
+      this.activeSubtags.splice(this.activeSubtags.indexOf(name), 1);
     } else {
-      this.activeTopics.push(topic_name);
+      this.activeSubtags.push(name);
     }
+    console.log(this.activeSubtags);
     this.dispatchEvent(new CustomEvent('selectionchanged',
-      {detail: this.activeTopics}));
+      {detail: this.activeSubtags}));
     //this.update_url();
   }
   update() {
@@ -103,8 +104,8 @@ class SubtagsList extends HTMLElement {
           ${observableList(
               this.subtags,
               (v, i) => html`<li>
-                <subtag-item class="${ v.selected ?
-                  'active' : ''}" @click="${() => this.toggle_topic(v.name)}">
+                <subtag-item class=${ v.selected ? 'active' : ''}
+                             @click=${()=>this.toggleSubtag(v.name)}>
                   ${v.name}
                 </subtag-item>
               </li>`,

@@ -18,6 +18,9 @@ const style = html`
       padding-top: 5px;
       /*border: 1px dashed #333;*/
     }
+    subtags-list {
+      border-top: 1px solid var(--on-surface-line);
+    }
   </style>
 `;
 

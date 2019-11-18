@@ -33,6 +33,9 @@ const style = html`
       border-radius: 5px;
       overflow: hidden;
     }
+    #add-tags {
+      border-top: 1px solid var(--on-surface-line);
+    }
     .overlay {
       background-color: rgba(255, 255, 255, 0.10);
       padding: 10px;
@@ -58,12 +61,27 @@ class EntryCreate extends HTMLElement {
     this.showHint = false;
     this.update();
   }
+  get activeTags() {
+    return this._activeTags || [];
+  }
+  set activeTags(v) {
+    this._activeTags = v;
+    console.log(v);
+    this.update();
+  }
   get newTopics() {
     return this._newTopics || [];
   }
   set newTopics(v) {
     this._newTopics = v;
     this.showHint = false;
+    this.update();
+  }
+  get newTags() {
+    return this._newTags || [];
+  }
+  set newTags(v) {
+    this._newTags = v;
     this.update();
   }
   get entry() {
@@ -96,7 +114,6 @@ class EntryCreate extends HTMLElement {
     this.update();
   }
   async add_entry() {
-    console.log(this.entry);
     if (!this.valid) {
       this.showHint = true;
       this.update();
@@ -105,20 +122,24 @@ class EntryCreate extends HTMLElement {
     this.showHint = false;
     this.update();
     const db = await api.getSource('entries');
-    await db.add({
+    const entry = {
       ...this.entry,
       topics: [ ...this.activeTopics, ...this.newTopics ],
-      tags: [],
-    });
+      tags: [ ...this.newTags ],
+    };
+    await db.add(entry);
     console.log("created entry!!");
+    console.log(entry);
     // -> return id ?
     //console.log(e);
     this.reset();
   }
   reset() {
     this.shadowRoot.querySelector('entry-input').reset();
-    this.shadowRoot.querySelector('add-items').reset();
+    this.shadowRoot.querySelector('#add-topics').reset();
     this.shadowRoot.querySelector('topics-list').reset();
+    this.shadowRoot.querySelector('#add-tags').reset();
+
   }
   getHint() {
     if (!this.inputReady)
@@ -137,12 +158,16 @@ class EntryCreate extends HTMLElement {
         ${this.showHint ? this.getHint() : html``}
       </div>
       <div id="input-overlay">
-        <add-items label="New Topic..."
+        <add-items id="add-topics" label="New Topic..."
                    @itemschanged=${(e)=>{this.newTopics = e.detail}}></add-items>
         <topics-list .activeTopics=${this.activeTopics}
                      @selectionchanged=${(e)=>{this.activeTopics = e.detail}}>
         </topics-list>
-        <subtags-list></subtags-list>
+        <add-items id="add-tags" label="New Tag..."
+                   @itemschanged=${(e)=>{this.newTags = e.detail}}></add-items>
+        <subtags-list .activeTopics=${this.activeTopics} .activeSubtags=${this.activeTags}
+                      @selectionchanged=${(e)=>{this.activeTags = e.detail}}>
+        </subtags-list>
       </div>
       `, this.shadowRoot);
   }
