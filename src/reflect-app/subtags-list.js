@@ -41,27 +41,27 @@ class SubtagsList extends HTMLElement {
   }
   set activeTopics(v) {
     this._activeTopics = v;
-    if (this.subtags) this.update_query();
+    if (this.observableSubtags) this.update_query();
   }
   get activeSubtags() {
     return this._activeSubtags || [];
   }
   set activeSubtags(v) {
     this._activeSubtags = v;
-    if (this.subtags) this.update_query();
+    if (this.observableSubtags) this.update_query();
   }
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
   }
   connectedCallback() {
-    this.subtags = api.observe('entries');
+    this.observableSubtags = api.observe('entries');
     this.update_query();
     this.update();
   }
   update_query() {
     // get subtags of selected topics
-    this.subtags.query([
+    this.observableSubtags.query([
       {$unwind: "$topics"},
       {$project: {
         topic: "$topics",
@@ -107,7 +107,7 @@ class SubtagsList extends HTMLElement {
       <nav id="subtags">
         <ul>
           ${observableList(
-              this.subtags,
+              this.observableSubtags,
               (v, i) => html`<li>
                 <subtag-item class=${ v.selected ? 'active' : ''}
                              @click=${()=>this.toggleSubtag(v.name)}>
