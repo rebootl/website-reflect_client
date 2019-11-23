@@ -24,6 +24,25 @@ const style = html`
   </style>
 `;
 
+async function getValidTags(activeTopics) {
+  const subtagsSource = await api.getSource('entries');
+  const res = await subtagsSource.query([
+    {$unwind: "$topics"},
+    {$project: {
+      topic: "$topics",
+      tags: "$tags",
+      selected: {$in: [
+        "$topics",
+        activeTopics
+      ]}}
+    },
+    {$match: {selected: true}},
+    {$unwind: "$tags"},
+    {$group: {_id: "$tags"}}
+  ]);
+  return res.map((t)=>t._id);
+}
+
 class MainMenu extends HTMLElement {
   constructor() {
     super();
@@ -48,11 +67,16 @@ class MainMenu extends HTMLElement {
     this.active_subtags = params.subtags || [];
     this.update();
   }
-  update_url() {
+  async update_url() {
     // generate url
     // format e.g. #entries?select=true&topic_id[]=3&tag_id[]=2&tag_id[]=3
     // elements:
     // #entries?select=true &topic_id[]=3 &tag_id[]=2 &tag_id[]=3
+
+    // this has to check for validity of subtags!!!
+    const validTags = await getValidTags(this.active_topics);
+    this.active_subtags = this.active_subtags.filter(t=>validTags.includes(t));
+
     let hash_url = "#entries";
     if (this.active_topics.length > 0) {
       hash_url += "?selected";
@@ -76,12 +100,16 @@ class MainMenu extends HTMLElement {
   }
   update() {
     render(html`${style}
-      <topics-list .activeTopics=${this.active_topics}
-        @selectionchanged=${(e) => this.updateUrlTopics(e.detail)}></topics-list>
-      <subtags-list .activeTopics=${this.active_topics}
+      <topics-list
+        .activeTopics=${this.active_topics}
+        @selectionchanged=${(e)=>this.updateUrlTopics(e.detail)}>
+      </topics-list>
+      <subtags-list
+        .activeTopics=${this.active_topics}
         .activeSubtags=${this.active_subtags}
-        @selectionchanged=${(e) => this.updateUrlSubtags(e.detail)}></subtags-list>`,
-      this.shadowRoot);
+        @selectionchanged=${(e)=>this.updateUrlSubtags(e.detail)}>
+      </subtags-list>
+    `, this.shadowRoot);
   }
 }
 
