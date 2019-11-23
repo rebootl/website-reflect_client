@@ -122,8 +122,10 @@ class EntryCreate extends HTMLElement {
     this.showHint = false;
     this.update();
     const db = await api.getSource('entries');
+    const date = new Date();
     const entry = {
       ...this.entry,
+      date: date,
       topics: [ ...this.activeTopics, ...this.newTopics ],
       tags: [ ...this.activeTags, ...this.newTags ],
     };
