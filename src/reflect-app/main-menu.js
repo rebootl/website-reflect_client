@@ -4,7 +4,7 @@ import './topics-list.js';
 import './subtags-list.js';
 import './gen-elements/text-input.js';
 import './gen-elements/labelled-button.js';
-import { api } from './api-service.js';
+import { getValidTags } from './api_request_helpers.js';
 
 const style = html`
   <style>
@@ -24,25 +24,6 @@ const style = html`
   </style>
 `;
 
-async function getValidTags(activeTopics) {
-  const subtagsSource = await api.getSource('entries');
-  const res = await subtagsSource.query([
-    {$unwind: "$topics"},
-    {$project: {
-      topic: "$topics",
-      tags: "$tags",
-      selected: {$in: [
-        "$topics",
-        activeTopics
-      ]}}
-    },
-    {$match: {selected: true}},
-    {$unwind: "$tags"},
-    {$group: {_id: "$tags"}}
-  ]);
-  return res.map((t)=>t._id);
-}
-
 class MainMenu extends HTMLElement {
   constructor() {
     super();
@@ -52,8 +33,6 @@ class MainMenu extends HTMLElement {
     myrouter.register(this);
   }
   router_register(url_state_obj) {
-    this.subtags = api.observe('entries');
-
     this.update_menu_by_url(url_state_obj);
     this.update();
   }

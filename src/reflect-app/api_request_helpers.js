@@ -1,3 +1,23 @@
+import { api } from './api-service.js';
+
+export async function getValidTags(activeTopics) {
+  const subtagsSource = await api.getSource('entries');
+  const res = await subtagsSource.query([
+    {$unwind: "$topics"},
+    {$project: {
+      topic: "$topics",
+      tags: "$tags",
+      selected: {$in: [
+        "$topics",
+        activeTopics
+      ]}}
+    },
+    {$match: {selected: true}},
+    {$unwind: "$tags"},
+    {$group: {_id: "$tags"}}
+  ]);
+  return res.map((t)=>t._id);
+}
 
 export const api_req_get = async (api_url, header) => {
   try {

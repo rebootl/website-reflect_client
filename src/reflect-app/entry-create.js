@@ -4,6 +4,7 @@ import './gen-elements/text-input.js';
 import './entry-input.js';
 import './add-items.js';
 import './main-menu.js';
+import { getValidTags } from './api_request_helpers.js';
 
 const style = html`
   <style>
@@ -143,6 +144,12 @@ class EntryCreate extends HTMLElement {
     this.shadowRoot.querySelector('#add-tags').reset();
     this.shadowRoot.querySelector('subtags-list').reset();
   }
+  async updateTopicsTags(activeTopics) {
+    // set valid tags here !!
+    const validTags = await getValidTags(activeTopics);
+    this.activeTopics = activeTopics;
+    this.activeTags = this.activeTags.filter(t=>validTags.includes(t));
+  }
   getHint() {
     if (!this.inputReady)
       return html`<small class="hint">entry input incomplete...</small>`;
@@ -163,7 +170,7 @@ class EntryCreate extends HTMLElement {
         <add-items id="add-topics" label="New Topic..."
                    @itemschanged=${(e)=>{this.newTopics = e.detail}}></add-items>
         <topics-list .activeTopics=${this.activeTopics}
-                     @selectionchanged=${(e)=>{this.activeTopics = e.detail}}>
+                     @selectionchanged=${(e)=>this.updateTopicsTags(e.detail)}>
         </topics-list>
         <add-items id="add-tags" label="New Tag..."
                    @itemschanged=${(e)=>{this.newTags = e.detail}}></add-items>
