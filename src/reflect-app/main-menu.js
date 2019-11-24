@@ -4,7 +4,6 @@ import './topics-list.js';
 import './subtags-list.js';
 import './gen-elements/text-input.js';
 import './gen-elements/labelled-button.js';
-import { getValidTags } from './api_request_helpers.js';
 
 const style = html`
   <style>
@@ -51,10 +50,6 @@ class MainMenu extends HTMLElement {
     // format e.g. #entries?select=true&topic_id[]=3&tag_id[]=2&tag_id[]=3
     // elements:
     // #entries?select=true &topic_id[]=3 &tag_id[]=2 &tag_id[]=3
-
-    // this has to check for validity of subtags!!!
-    const validTags = await getValidTags(this.active_topics);
-    this.active_subtags = this.active_subtags.filter(t=>validTags.includes(t));
 
     let hash_url = "#entries";
     if (this.active_topics.length > 0) {

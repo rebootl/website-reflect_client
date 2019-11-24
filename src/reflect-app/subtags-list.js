@@ -2,6 +2,7 @@ import { html, render } from 'lit-html';
 import './subtag-item.js';
 import { api } from './api-service.js';
 import { observableList } from './observableList';
+import { getValidTags } from './api_request_helpers.js';
 
 const style = html`
 <style>
@@ -41,7 +42,8 @@ class SubtagsList extends HTMLElement {
   }
   set activeTopics(v) {
     this._activeTopics = v;
-    if (this.observableSubtags) this.update_query();
+    this.updateTagsFromTopics(v);
+    //if (this.observableSubtags) this.update_query();
   }
   get activeSubtags() {
     return this._activeSubtags || [];
@@ -61,6 +63,7 @@ class SubtagsList extends HTMLElement {
   }
   update_query() {
     // get subtags of selected topics
+    console.log(this.activeSubtags);
     this.observableSubtags.query([
       {$unwind: "$topics"},
       {$project: {
@@ -84,6 +87,14 @@ class SubtagsList extends HTMLElement {
       }},
       {$sort: {name: 1}}
     ]);
+  }
+  async updateTagsFromTopics() {
+    const validTags = await getValidTags(this.activeTopics);
+    const oldTags = this.activeSubtags;
+    this.activeSubtags = this.activeSubtags.filter(t=>validTags.includes(t));
+    if (oldTags.length != this.activeSubtags.length) {
+      this.selectionchanged();
+    }
   }
   toggleSubtag(name) {
     if (this.activeSubtags.includes(name)) {
