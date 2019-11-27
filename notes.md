@@ -2,7 +2,12 @@
 
 ## ToDo
 
+* -> don't update from router if url doesn't effectively changed
+  -> update url inside router
+
 * integrate project-Data
+
+* check script/view for duplicate id's, broken links
 
 * rework style LUL
 

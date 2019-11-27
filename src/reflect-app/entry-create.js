@@ -52,6 +52,20 @@ const event_created = new CustomEvent('created', {
   bubbles: true,
 });
 
+async function digestMessage(message) {
+  const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+  return hashHex;
+}
+
+async function getPrefix(text) {
+  text = text.trimStart().split(" ").slice(0,3).join().replace(/[^a-zA-Z0-9]/g,'-');
+  if (text.length > 50) text = text.slice(0, 50);
+  return text;
+}
+
 class EntryCreate extends HTMLElement {
   get activeTopics() {
     return this._activeTopics || [];
@@ -123,17 +137,28 @@ class EntryCreate extends HTMLElement {
     this.update();
     const db = await api.getSource('entries');
     const date = new Date();
-    const entry = {
+    let entry = {
       ...this.entry,
       date: date,
       topics: [ ...this.activeTopics, ...this.newTopics ],
       tags: [ ...this.activeTags, ...this.newTags ],
     };
+    // create id/ref
+    const digest = await digestMessage(JSON.stringify(entry));
+    let prefix = "";
+    console.log(entry.type);
+    if (entry.type === 'note') {
+      prefix = await getPrefix(entry.text);
+    } else if (entry.type === 'link') {
+      prefix = "link";
+    }
+    const id = prefix + "-" + digest.slice(0, 10);
+    console.log(id);
+    entry = { ...entry, id };
     await db.add(entry);
     console.log("created entry!!");
-    console.log(entry);
+    console.log("id: " + id);
     // -> return id ?
-    //console.log(e);
     this.reset();
   }
   reset() {

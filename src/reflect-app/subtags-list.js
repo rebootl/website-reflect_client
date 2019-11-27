@@ -63,7 +63,7 @@ class SubtagsList extends HTMLElement {
   }
   update_query() {
     // get subtags of selected topics
-    console.log(this.activeSubtags);
+    //console.log(this.activeSubtags);
     this.observableSubtags.query([
       {$unwind: "$topics"},
       {$project: {
