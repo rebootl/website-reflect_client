@@ -1,5 +1,4 @@
 import { html, render } from 'lit-html';
-import { repeat } from 'lit-html/directives/repeat';
 import { myrouter } from './router.js';
 import { api } from './api-service.js';
 import { observableList } from './observableList';
@@ -11,10 +10,13 @@ const style = html`
       display: block;
       box-sizing: border-box;
     }
-    #entries-list {
+    ul {
       list-style: none;
       margin: 0;
       padding: 0;
+    }
+    entry-item {
+      margin: 15px 20px 15px 20px;
     }
   </style>
 `;
@@ -43,19 +45,23 @@ class EntriesList extends HTMLElement {
   }
   updateQuery() {
     if (this.activeTopics < 1) {
-      this.entries.query([]);
+      this.entries.query([
+        {$sort: {date: -1}},
+      ]);
     } else if (this.activeTags < 1) {
       this.entries.query([
         { $match: { $and: [
           { topics: { $in: this.activeTopics } }
-        ] } }
+        ] } },
+        { $sort: {date: -1 }},
       ]);
     } else {
       this.entries.query([
         { $match: { $and: [
           { topics: { $in: this.activeTopics } },
           { tags: { $in: this.activeTags } }
-        ] } }
+        ] } },
+        { $sort: {date: -1 }},
       ]);
     }
   }
@@ -64,10 +70,14 @@ class EntriesList extends HTMLElement {
     render(html`${style}
       <ul>
       ${observableList(
-          this.entries
-
+          this.entries,
+          (v, i) => html`
+            <li><entry-item .entry=${v}></entry-item></li>
+          `,
+          html`<pre>loading...</pre>`
         )}
-      </ul>`, this.shadowRoot);
+      </ul>
+      `, this.shadowRoot);
       //<li><entry-item .entry=${v}></entry-item></li>
       /*          (v, i) => html`
                   <li>${v.text}</li>
