@@ -12,7 +12,6 @@ const style = html`
     background-color: var(--surface);
     color: var(--light-text-hig-emph);
     /* stub height */
-    min-height: 100px;
     padding-top: 5px;
     /*border: 1px dashed #333;*/
   }
