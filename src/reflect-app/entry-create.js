@@ -32,6 +32,10 @@ const style = html`
       z-index: 500;*/
       border-radius: 5px;
       overflow: hidden;
+      display: none;
+    }
+    #input-overlay.active {
+      display: block;
     }
     #add-tags {
       border-top: 1px solid var(--on-surface-line);
@@ -104,6 +108,9 @@ class EntryCreate extends HTMLElement {
   set entry(v) {
     this._entry = v;
     this.showHint = false;
+    const s = this.selectionElement.classList;
+    if (Object.entries(v).length !== 0) s.add('active')
+    else s.remove('active');
     this.update();
   }
   get inputReady() {
@@ -126,6 +133,7 @@ class EntryCreate extends HTMLElement {
   }
   connectedCallback() {
     this.update();
+    this.selectionElement = this.shadowRoot.querySelector('#input-overlay');
   }
   async add_entry() {
     if (!this.valid) {
