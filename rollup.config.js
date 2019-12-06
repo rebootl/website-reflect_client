@@ -18,10 +18,15 @@ export default {
         resolve({browser: true}), // tells Rollup how to find date-fns in node_modules
         commonjs(), // converts date-fns to ES modules
         copy({
-          'src/index.html': 'public/index.html',
-          'src/base.css': 'public/base.css',
-          'src/layout': 'public/layout',
-          'src/ext-js': 'public/ext-js'
+          targets: [
+            { src: [
+              'src/index.html',
+              'src/base.css',
+              'src/layout',
+              'src/ext-js',
+              ], dest: 'public'
+            },
+          ]
         }),
         production && terser(), // minify, but only in production
     ]
