@@ -1,6 +1,7 @@
 import { global_state } from './global_state.js';
 import { login_url } from './urls.js';
 import { api_req_post } from './api_request_helpers.js'
+import { api } from './api-service.js';
 
 export default {
 
@@ -10,7 +11,7 @@ export default {
       password: pw
     });
     // check login login_resp
-    //console.log(login_resp);
+    console.log(login_resp);
     if (!login_resp) {
       console.log("Login unsuccessful :(");
       return false;
@@ -18,21 +19,25 @@ export default {
       console.log("Login successful!");
       //console.log(login_resp);
       // store JWT
-      localStorage.setItem('access_token', login_resp.access_token);
+      localStorage.setItem('access_token', login_resp.token);
       localStorage.setItem('username', username);
       // set logged_in = true
       // -> get rid of the global_state.user obj. entirely ?!
       global_state.user.name = username;
       global_state.user.logged_in = true;
+      await api.setParams({'Authorization':  'Bearer ' + login_resp.token});
+      await api.reset();
       return true;
     }
   },
 
-  logout() {
+  async logout() {
     localStorage.removeItem('username');
     localStorage.removeItem('access_token');
     global_state.user.name = '';
     global_state.user.logged_in = false;
+    await api.setParams({});
+    await api.reset();
   },
 
   update_login_status() {

@@ -68,6 +68,7 @@ class UserDropdownMenu extends HTMLElement {
       // -> update dropdown-menu, clear form
       // -> update content
       //console.log('login successful');
+      //window.location.reload();
       this.update_after_success();
     }
     //else {
@@ -79,6 +80,7 @@ class UserDropdownMenu extends HTMLElement {
   }
   logout() {
     auth.logout();
+    //window.location.reload();
     // -> check return ?
     this.update_after_success();
   }

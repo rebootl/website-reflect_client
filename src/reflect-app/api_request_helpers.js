@@ -65,14 +65,14 @@ export const api_req_post = async (api_url, params, header=default_header) => {
       headers: header,
       body: JSON.stringify(params)
     });
-    //console.log(response);
     if (!response.ok) {
       throw new Error('HTTP error, status = ' + response.status);
     }
+    //console.log(response)
     const data = await response.json();
+    //console.log(data);
     return data;
   } catch(err) {
     console.log(err);
-    return false;
   }
 }
