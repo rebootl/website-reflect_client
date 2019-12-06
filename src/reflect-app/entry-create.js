@@ -135,7 +135,7 @@ class EntryCreate extends HTMLElement {
     this.update();
     this.selectionElement = this.shadowRoot.querySelector('#input-overlay');
   }
-  async add_entry() {
+  async add_entry(_private) {
     if (!this.valid) {
       this.showHint = true;
       this.update();
@@ -150,6 +150,7 @@ class EntryCreate extends HTMLElement {
       date: date,
       topics: [ ...this.activeTopics, ...this.newTopics ],
       tags: [ ...this.activeTags, ...this.newTags ],
+      private: _private,
     };
     // create id/ref
     const digest = await digestMessage(JSON.stringify(entry));
@@ -189,7 +190,9 @@ class EntryCreate extends HTMLElement {
                      @ready=${(e)=>{this.inputReady = e.detail}}
                      @inputchange=${(e)=>{this.entry = e.detail}}></entry-input>
         <labelled-button class="inline" ?disabledstyle=${!this.valid}
-                         @click=${()=>this.add_entry()} label="Create"></labelled-button>
+                         @click=${()=>this.add_entry(false)} label="Create"></labelled-button>
+        <labelled-button class="inline" ?disabledstyle=${!this.valid}
+                         @click=${()=>this.add_entry(true)} label="Create Private"></labelled-button>
         ${this.showHint ? this.getHint() : html``}
       </div>
       <div id="input-overlay">

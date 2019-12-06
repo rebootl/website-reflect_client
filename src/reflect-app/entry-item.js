@@ -1,6 +1,7 @@
 import { html, render } from 'lit-html';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-import format from 'date-fns/format'
+//import format from 'date-fns/format';
+import moment from 'moment';
 const md = window.markdownit().use(window.markdownitEmoji);
 // add twemojis
 // (attribution req.)
@@ -95,16 +96,17 @@ class EntryItem extends HTMLElement {
     }
   }
   update() {
-    const dateFormat = "ddd MMM d YYYY HH:mm:ss Z"
-
     render(html`${style}
                 <small class="le-header-text">
-                  ${format(this.entry.date, dateFormat)}
+                  ${moment(new Date(this.entry.date)).format('ddd MMM D YYYY - HH:mm:ss')}
+                  ${ this.entry.private ? html`(private)` : html``}
                   <a href="#entry?id=${this.entry.id}">#entry?id=${this.entry.id}</a>
                 </small>
                 ${this.getContent()}
       `, this.shadowRoot);
       /*
+      const dateFormat = "ddd MMM dd yyyy HH:mm:ss"
+      ${format(new Date(this.entry.date), dateFormat)}
       <a href="#entry?id=${this.entry.id}">#entry?id=${this.entry.id}</a>
       ${ this.entry.private ?
         html`<img class="le-header-icon" src="layout/icons/private_32.png">
