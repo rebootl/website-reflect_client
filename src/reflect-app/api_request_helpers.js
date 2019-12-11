@@ -19,24 +19,8 @@ export async function getValidTags(activeTopics) {
   return res.map((t)=>t._id);
 }
 
-export const api_req_get = async (api_url, header) => {
-  try {
-    const response = await fetch(api_url, {
-      headers: header
-    });
-    if (!response.ok) {
-      throw new Error('HTTP error, status = ' + response.status);
-    }
-    const data = await response.json();
-    return data;
-  } catch(err) {
-    console.log(err);
-    return false;
-  }
-}
-
-export const api_req_get2 = async (api_url, header) => {
-  const response = await fetch(api_url, {
+export const apiGetRequest = async (apiUrl, header) => {
+  const response = await fetch(apiUrl, {
     headers: header
   });
   if (!response.ok) {
@@ -51,6 +35,22 @@ export const api_req_get2 = async (api_url, header) => {
     throw e;
   }
   return data;
+}
+
+export const api_req_get = async (api_url, header) => {
+  try {
+    const response = await fetch(api_url, {
+      headers: header
+    });
+    if (!response.ok) {
+      throw new Error('HTTP error, status = ' + response.status);
+    }
+    const data = await response.json();
+    return data;
+  } catch(err) {
+    console.log(err);
+    return false;
+  }
 }
 
 const default_header = {

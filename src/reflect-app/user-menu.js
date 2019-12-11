@@ -1,5 +1,4 @@
 import { html, render } from 'lit-html';
-import { global_state } from './global_state.js';
 import './user-dropdown-button.js';
 import './user-dropdown-menu.js';
 
@@ -34,6 +33,13 @@ class UserMenu extends HTMLElement {
   connectedCallback() {
     this.update();
   }
+  toggle_menu() {
+    const user_dd_button_el = this.shadowRoot.querySelector('user-dropdown-button');
+    user_dd_button_el.classList.toggle('active');
+    user_dd_button_el.update();
+    this.shadowRoot.querySelector('user-dropdown-menu')
+    .classList.toggle('show_menu');
+  }
   update() {
     render(html`
       ${style}
@@ -41,13 +47,6 @@ class UserMenu extends HTMLElement {
       <user-dropdown-menu @close=${()=>this.toggle_menu()}></user-dropdown-menu>
     `
     , this.shadowRoot);
-  }
-  toggle_menu() {
-    const user_dd_button_el = this.shadowRoot.querySelector('user-dropdown-button');
-    user_dd_button_el.classList.toggle('active');
-    user_dd_button_el.update();
-    this.shadowRoot.querySelector('user-dropdown-menu')
-      .classList.toggle('show_menu');
   }
 }
 

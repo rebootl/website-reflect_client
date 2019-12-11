@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html';
-import { global_state } from './global_state.js';
+import { loggedIn, getUsername } from './auth.js';
 
 const style = html`
   <style>
@@ -41,13 +41,12 @@ class UserDropdownButton extends HTMLElement {
   }
   update() {
     // unicode user icon: &#x1F464; doesn't work in chromium :(
-    const user = global_state.user;
     //console.log(user);
     render(html`
       ${style}
       <img id="icon-user" src="layout/icons/user-dark_20.png">
-      ${ user.logged_in ?
-          html`<span id="text">${ user.name }</span>` :
+      ${ loggedIn() ?
+          html`<span id="text">${ getUsername() }</span>` :
           html`` }
       <img id="icon-down" src="/layout/icons/down_20.png">
     `

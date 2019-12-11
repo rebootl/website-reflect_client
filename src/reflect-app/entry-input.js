@@ -1,10 +1,9 @@
 import { html, render } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
+import { apiGetRequest } from './api_request_helpers.js';
+import { url_info_url } from './urls.js';
+import { get_auth_header } from './auth.js';
 import './gen-elements/text-input.js';
-import { api_req_get2, api_req_post } from './api_request_helpers.js';
-import { url_info_url, entries_url } from './urls.js';
-import { global_state } from './global_state.js';
-import auth from './auth.js';
 
 const style = html`
   <style>
@@ -130,9 +129,9 @@ class EntryInput extends HTMLElement {
     }*/
   }
   async setUrlInfo(url) {
-    await api_req_get2(
+    await apiGetRequest(
       url_info_url + '?url=' + encodeURIComponent(url),
-      auth.get_auth_header()
+      get_auth_header()
     )
       .then(data=>{
         this.result = {...this.result, info: data.cont_type, title: data.title};

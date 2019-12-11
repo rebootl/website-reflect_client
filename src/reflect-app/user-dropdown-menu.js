@@ -1,11 +1,10 @@
 import { html, render } from 'lit-html';
-import { global_state } from './global_state.js';
+import { myrouter } from './router.js';
+import { login, logout, loggedIn } from './auth.js';
 import './gen-elements/text-input.js';
 import './gen-elements/password-input.js';
 import './gen-elements/labelled-button.js';
 import './gen-elements/close-button.js';
-import auth from './auth.js';
-import { myrouter } from './router.js';
 
 const style = html`
   <style>
@@ -59,11 +58,10 @@ class UserDropdownMenu extends HTMLElement {
     //console.log(username);
     //console.log(pw);
     // -> make some checks !!!
-    const res = await auth.login(username, pw);
+    const res = await login(username, pw);
     //console.log(res);
     if (res) {
       // login successful
-      //console.log(global_state);
       // -> flash message -> do in menu
       // -> update dropdown-menu, clear form
       // -> update content
@@ -79,7 +77,7 @@ class UserDropdownMenu extends HTMLElement {
     //}
   }
   logout() {
-    auth.logout();
+    logout();
     //window.location.reload();
     // -> check return ?
     this.update_after_success();
@@ -93,7 +91,7 @@ class UserDropdownMenu extends HTMLElement {
     myrouter.trigger_update();
   }
   get_login_content() {
-    if (global_state.user.logged_in) {
+    if (loggedIn()) {
       return html`<labelled-button id="logout-button"
                                    @click=${()=>this.logout()}
                                    label="Logout"></labelled-button>`;

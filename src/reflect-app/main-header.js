@@ -1,5 +1,4 @@
 import { html, render } from 'lit-html';
-import { global_state } from './global_state.js';
 import './user-menu.js';
 
 const style = html`

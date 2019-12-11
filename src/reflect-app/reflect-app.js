@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
-import { global_state } from './global_state.js';
-import auth from './auth.js';
+//import { global_state } from './global_state.js';
+//import auth from './auth.js';
 import './router.js';
 import './main-header.js';
 import './main-menu.js';
@@ -148,7 +148,7 @@ class ReflectApp extends HTMLElement {
     super();
     this.attachShadow({mode: 'open'});
 
-    auth.update_login_status();
+    //auth.update_login_status();
     this.update();
   }
   update() {

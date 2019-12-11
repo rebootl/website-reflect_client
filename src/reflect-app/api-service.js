@@ -1,23 +1,7 @@
 import { API } from 'projectData-client';
 import { setApi } from 'projectData-client/dist/Inspector.js';
 import faker from 'faker';
-
-export function loggedIn() {
-  if (localStorage.getItem('access_token')) {
-    return true;
-  }
-  return false;
-}
-
-export function getAuthHeader() {
-  if (loggedIn()) {
-    return {
-      'Authorization':  'Bearer ' + localStorage.getItem('access_token')
-    }
-  } else {
-    return {}
-  }
-}
+import { getAuthHeader, loggedIn } from './auth.js';
 
 export const api = new API('http://localhost:4040/', getAuthHeader());
 // set api for inspector
