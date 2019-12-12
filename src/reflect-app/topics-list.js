@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
-import { api } from './api-service.js';
-import { observableList } from './observableList';
+import { api } from './resources/api-service.js';
+import { observableList } from './resources/observableList';
 import './topic-item.js';
 
 const style = html`

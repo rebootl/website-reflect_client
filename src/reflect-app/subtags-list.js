@@ -1,8 +1,8 @@
 import { html, render } from 'lit-html';
+import { api } from './resources/api-service.js';
+import { observableList } from './resources/observableList';
+import { getValidTags } from './resources/api_request_helpers.js';
 import './subtag-item.js';
-import { api } from './api-service.js';
-import { observableList } from './observableList';
-import { getValidTags } from './api_request_helpers.js';
 
 const style = html`
 <style>

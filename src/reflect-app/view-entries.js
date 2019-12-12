@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
-import { loggedIn } from './auth.js';
-import { myrouter } from './router.js';
+import { loggedIn } from './resources/auth.js';
+import { myrouter } from './resources/router.js';
 import './entries-list.js';
 import './entry-create.js';
 

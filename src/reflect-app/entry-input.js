@@ -1,8 +1,8 @@
 import { html, render } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
-import { apiGetRequest } from './api_request_helpers.js';
-import { url_info_url } from './urls.js';
-import { get_auth_header } from './auth.js';
+import { apiGetRequest } from './resources/api_request_helpers.js';
+import { url_info_url } from './resources/urls.js';
+import { get_auth_header } from './resources/auth.js';
 import './gen-elements/text-input.js';
 
 const style = html`

@@ -1,7 +1,7 @@
 import { html, render } from 'lit-html';
-import { myrouter } from './router.js';
-import { api } from './api-service.js';
-import { observableList } from './observableList';
+import { myrouter } from './resources/router.js';
+import { api } from './resources/api-service.js';
+import { observableList } from './resources/observableList';
 import './entry-item.js';
 
 const style = html`
@@ -31,7 +31,6 @@ class EntriesList extends HTMLElement {
   }
   router_register(url_state_obj) {
     this.entries = api.observe('entries');
-    //this.updateQuery();
     this.update();
   }
   router_load(url_state_obj) {
@@ -66,7 +65,6 @@ class EntriesList extends HTMLElement {
     }
   }
   update() {
-    //console.log(this.entries_obj.entries);
     render(html`${style}
       <ul>
       ${observableList(
@@ -78,11 +76,6 @@ class EntriesList extends HTMLElement {
         )}
       </ul>
       `, this.shadowRoot);
-      //<li><entry-item .entry=${v}></entry-item></li>
-      /*          (v, i) => html`
-                  <li>${v.text}</li>
-                `,
-                html`<pre>loading...</pre>`*/
   }
 }
 

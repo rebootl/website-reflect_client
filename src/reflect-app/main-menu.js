@@ -1,9 +1,7 @@
 import { html, render } from 'lit-html';
-import { myrouter } from './router.js';
+import { myrouter } from './resources/router.js';
 import './topics-list.js';
 import './subtags-list.js';
-import './gen-elements/text-input.js';
-import './gen-elements/labelled-button.js';
 
 const style = html`
   <style>

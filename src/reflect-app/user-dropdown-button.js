@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html';
-import { loggedIn, getUsername } from './auth.js';
+import { loggedIn, getUsername } from './resources/auth.js';
 
 const style = html`
   <style>

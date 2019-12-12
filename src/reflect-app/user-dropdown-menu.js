@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
-import { myrouter } from './router.js';
-import { login, logout, loggedIn } from './auth.js';
+import { myrouter } from './resources/router.js';
+import { login, logout, loggedIn } from './resources/auth.js';
 import './gen-elements/text-input.js';
 import './gen-elements/password-input.js';
 import './gen-elements/labelled-button.js';

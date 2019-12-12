@@ -1,9 +1,7 @@
 import { html, render } from 'lit-html';
-import { api } from './api-service.js';
-import './gen-elements/text-input.js';
+import { api } from './resources/api-service.js';
 import './entry-input.js';
 import './add-items.js';
-import './main-menu.js';
 
 const style = html`
   <style>
@@ -209,10 +207,6 @@ class EntryCreate extends HTMLElement {
       </div>
       `, this.shadowRoot);
   }
-  //${(e)=>this.newTopics = e.detail}
-
-  //?disabled=${this.entry.detection !== 'complete' ||
-  //this.activeTopics.length < 1}
 }
 
 customElements.define('entry-create', EntryCreate);

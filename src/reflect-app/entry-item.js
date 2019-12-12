@@ -74,13 +74,6 @@ class EntryItem extends HTMLElement {
   set entry(v) {
     this._entry = v;
     this.update();
-    //this.state_update();
-  }
-  state_update() {
-    if (this.entry.private) {
-      this.shadowRoot.host.classList.add('private');
-    }
-    this.update();
   }
   getContent() {
     if (this.entry.type === 'note') {
@@ -104,19 +97,6 @@ class EntryItem extends HTMLElement {
                 </small>
                 ${this.getContent()}
       `, this.shadowRoot);
-      /*
-      const dateFormat = "ddd MMM dd yyyy HH:mm:ss"
-      ${format(new Date(this.entry.date), dateFormat)}
-      <a href="#entry?id=${this.entry.id}">#entry?id=${this.entry.id}</a>
-      ${ this.entry.private ?
-        html`<img class="le-header-icon" src="layout/icons/private_32.png">
-             <small class="le-header-text">(private)</small>` :
-        html`` }
-      ${ this.entry.pinned ?
-        html`<img class="le-header-icon" src="layout/icons/pin_16.png">
-             <small class="le-header-text">(pinned)</small>` :
-        html`` }
-      */
   }
 }
 

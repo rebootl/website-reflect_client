@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html';
-import { myrouter } from './router.js';
+import { myrouter } from './resources/router.js';
 import './view-entries.js';
 
 const style = html`
