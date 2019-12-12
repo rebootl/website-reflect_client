@@ -1,5 +1,7 @@
 import { html, render } from 'lit-html';
 import { api } from './resources/api-service.js';
+import './topics-list.js'
+import './subtags-list.js'
 import './entry-input.js';
 import './add-items.js';
 
