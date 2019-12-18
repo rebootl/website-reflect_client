@@ -3,6 +3,7 @@ import { classMap } from 'lit-html/directives/class-map.js';
 import { apiGetRequest } from './resources/api_request_helpers.js';
 import { url_info_url } from './resources/urls.js';
 import { get_auth_header } from './resources/auth.js';
+import './gen-elements/textarea-input.js';
 import './gen-elements/text-input.js';
 
 const style = html`
@@ -16,6 +17,9 @@ const style = html`
     }
     a {
       color: var(--primary);
+    }
+    textarea-input {
+      height: 25px;
     }
     .inline {
       display: inline-block;
@@ -220,9 +224,9 @@ class EntryInput extends HTMLElement {
     };
 
     render(html`${style}
-      <text-input id="entry-text" size="25" class="inline"
+      <textarea-input id="entry-text" height="25" class="inline"
                   @input=${(e)=>this.triggerDetect(e.target.value.trim())}
-                  placeholder="New Entry..."></text-input>
+                  placeholder="New Entry..."></textarea-input>
       <small id="type-detection">Type:
         ${this.getTypeDetect()}
       </small>

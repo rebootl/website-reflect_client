@@ -1,3 +1,9 @@
+Questions:
+
+- file structure
+- encryption in browser
+- textarea style
+
 ## ToDo
 
 * -> don't update from router if url doesn't effectively changed
