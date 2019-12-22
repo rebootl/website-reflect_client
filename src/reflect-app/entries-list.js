@@ -15,6 +15,9 @@ const style = html`
       margin: 0;
       padding: 0;
     }
+    li {
+      border-bottom: 1px solid var(--on-background-border);
+    }
     entry-item {
       margin: 15px 20px 15px 20px;
     }
@@ -37,6 +40,7 @@ class EntriesList extends HTMLElement {
     this.router_update(url_state_obj);
   }
   router_update(url_state_obj) {
+    console.log('updating entries-list...');
     const params = url_state_obj.params;
     this.activeTopics = params.topics || [];
     this.activeTags = params.subtags || [];
