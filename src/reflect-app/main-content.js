@@ -1,6 +1,7 @@
 import { html, render } from 'lit-html';
 import { myrouter } from './resources/router.js';
 import './view-entries.js';
+import './view-single-entry.js';
 
 const style = html`
   <style>
@@ -16,6 +17,7 @@ const style = html`
 
 const routes = {
   'entries': (url_state_obj) => html`<view-entries .url_state_obj=${url_state_obj}></view-entries>`,
+  'entry': (url_state_obj) => html`<view-single-entry .urlStateObject=${url_state_obj}></view-single-entry>`,
   //'add-entry': (a) => html`<add-entry></add-entry>`,
   'edit-entry': (a) => html`<edit-entry></edit-entry>`,
   //'edit-topic': (a) => html`<edit-topic></edit-topic>`,

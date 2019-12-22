@@ -1,8 +1,11 @@
 Questions:
 
-- file structure
-- encryption in browser
-- textarea style
+- fix triggers
+  - entries-list update
+  - auto show/hide create entry on logout/login
+- click logo to "home" view
+- maybe entry-content/header sub-components not needed anymore now, since using entry-item?
+- ..
 
 ## ToDo
 
