@@ -25,12 +25,18 @@ class ViewEntries extends HTMLElement {
   connectedCallback() {
     this.update();
   }
+  triggerUpdate(urlStateObject) {
+    this.update();
+    this.shadowRoot.querySelector('entries-list').triggerUpdate(urlStateObject);
+  }
   update() {
     render(html`${style}
-      ${ loggedIn() ? html`<entry-create @created="${()=>this.state_update()}">
-        </entry-create>` : html`` }
+      ${ loggedIn() ?
+        html`<entry-create></entry-create>` :
+        html`` }
       <entries-list></entries-list>
-      `, this.shadowRoot);
+      `,
+      this.shadowRoot);
   }
 }
 

@@ -1,5 +1,4 @@
 import { html, render } from 'lit-html';
-import { myrouter } from './resources/router.js';
 import { api } from './resources/api-service.js';
 import { observableList } from './resources/observableList';
 import './entry-item.js';
@@ -28,20 +27,14 @@ class EntriesList extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
+    this.entries = api.observe('entries');
   }
   connectedCallback() {
-    myrouter.register(this);
+    this.update()
   }
-  router_register(url_state_obj) {
-    this.entries = api.observe('entries');
-    this.update();
-  }
-  router_load(url_state_obj) {
-    this.router_update(url_state_obj);
-  }
-  router_update(url_state_obj) {
+  triggerUpdate(urlStateObject) {
     console.log('updating entries-list...');
-    const params = url_state_obj.params;
+    const params = urlStateObject.params;
     this.activeTopics = params.topics || [];
     this.activeTags = params.subtags || [];
     this.updateQuery();
@@ -79,7 +72,8 @@ class EntriesList extends HTMLElement {
           html`<pre>loading...</pre>`
         )}
       </ul>
-      `, this.shadowRoot);
+      `,
+      this.shadowRoot);
   }
 }
 

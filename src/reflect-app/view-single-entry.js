@@ -28,6 +28,9 @@ class ViewSingleEntry extends HTMLElement {
   connectedCallback() {
     this.updateQuery();
   }
+  triggerUpdate() {
+    //this.update();
+  }
   async updateQuery() {
     const params = this.urlStateObject.params;
     const entryId = params.id || [];

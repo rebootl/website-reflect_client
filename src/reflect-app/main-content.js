@@ -16,18 +16,17 @@ const style = html`
 `;
 
 const routes = {
-  'entries': (url_state_obj) => html`<view-entries .url_state_obj=${url_state_obj}></view-entries>`,
-  'entry': (url_state_obj) => html`<view-single-entry .urlStateObject=${url_state_obj}></view-single-entry>`,
-  //'add-entry': (a) => html`<add-entry></add-entry>`,
+  'entries': (url_state_obj) => html`<view-entries id="content"
+    .url_state_obj=${url_state_obj}></view-entries>`,
+  'entry': (url_state_obj) => html`<view-single-entry
+    .urlStateObject=${url_state_obj}></view-single-entry>`,
   'edit-entry': (a) => html`<edit-entry></edit-entry>`,
-  //'edit-topic': (a) => html`<edit-topic></edit-topic>`,
 };
 
 class MainContent extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-
     myrouter.register(this);
   }
   router_register(url_state_obj) {}
@@ -43,6 +42,8 @@ class MainContent extends HTMLElement {
       this.routed_content = routes['entries'](url_state_obj);
     }
     this.update();
+    const triggeredContent = this.shadowRoot.querySelector('#content');
+    if (triggeredContent) triggeredContent.triggerUpdate(url_state_obj);
   }
   update() {
     render(html`${style}
