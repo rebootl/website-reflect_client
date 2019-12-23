@@ -9,7 +9,11 @@ const style = html`
       box-sizing: border-box;
     }
     entry-item {
-      margin: 20px 20px 20px 20px;
+      margin: 20px;
+    }
+    pre {
+      margin: 20px;
+      color: var(--light-text-med-emph)
     }
   </style>
 `;
@@ -29,11 +33,12 @@ class ViewSingleEntry extends HTMLElement {
     this.updateQuery();
   }
   triggerUpdate() {
-    //this.update();
+    this.updateQuery();
   }
   async updateQuery() {
     const params = this.urlStateObject.params;
     const entryId = params.id || [];
+    console.log(entryId);
     const db = await api.getSource('entries');
     const [ entry ] = await db.query({ id: entryId });
     this.entry = entry;
@@ -42,7 +47,9 @@ class ViewSingleEntry extends HTMLElement {
   update() {
     console.log(this.entry);
     render(html`${style}
-      <entry-item .entry=${this.entry}></entry-item>
+      ${ this.entry ?
+        html`<entry-item .entry=${this.entry}></entry-item>` :
+        html`<pre>Ooops, entry not found... :/</pre>` }
       `, this.shadowRoot);
   }
 }

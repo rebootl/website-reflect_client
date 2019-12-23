@@ -16,9 +16,9 @@ const style = html`
 `;
 
 const routes = {
-  'entries': (url_state_obj) => html`<view-entries id="content"
+  'entries': (url_state_obj) => html`<view-entries class="trigger"
     .url_state_obj=${url_state_obj}></view-entries>`,
-  'entry': (url_state_obj) => html`<view-single-entry
+  'entry': (url_state_obj) => html`<view-single-entry class="trigger"
     .urlStateObject=${url_state_obj}></view-single-entry>`,
   'edit-entry': (a) => html`<edit-entry></edit-entry>`,
 };
@@ -42,7 +42,7 @@ class MainContent extends HTMLElement {
       this.routed_content = routes['entries'](url_state_obj);
     }
     this.update();
-    const triggeredContent = this.shadowRoot.querySelector('#content');
+    const triggeredContent = this.shadowRoot.querySelector('.trigger');
     if (triggeredContent) triggeredContent.triggerUpdate(url_state_obj);
   }
   update() {
