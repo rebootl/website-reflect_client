@@ -9,11 +9,17 @@ const style = html`
       display: block;
       box-sizing: border-box;
     }
-    #entries-list {
+    #entryCreateBox {
+      border-bottom: 1px solid var(--on-background-border);
+    }
+    entry-create {
+      margin: 15px 20px 0 20px;
+    }
+    /*#entries-list {
       list-style: none;
       margin: 0;
       padding: 0;
-    }
+    }*/
   </style>
 `;
 
@@ -32,7 +38,7 @@ class ViewEntries extends HTMLElement {
   update() {
     render(html`${style}
       ${ loggedIn() ?
-        html`<entry-create></entry-create>` :
+        html`<div id="entryCreateBox"><entry-create></entry-create></div>` :
         html`` }
       <entries-list></entries-list>
       `,

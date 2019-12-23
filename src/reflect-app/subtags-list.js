@@ -12,7 +12,7 @@ const style = html`
     background-color: var(--surface);
     color: var(--light-text-hig-emph);
     /* stub height */
-    padding-top: 5px;
+    /*padding-top: 5px;*/
     /*border: 1px dashed #333;*/
   }
   ul {

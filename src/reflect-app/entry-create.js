@@ -1,4 +1,5 @@
 import { html, render } from 'lit-html';
+import { classMap } from 'lit-html/directives/class-map.js';
 import { api } from './resources/api-service.js';
 import './topics-list.js'
 import './subtags-list.js'
@@ -10,8 +11,7 @@ const style = html`
     :host {
       display: block;
       box-sizing: border-box;
-      padding: 15px 15px 10px 15px;
-      border-bottom: 1px solid var(--on-background-border);
+      /*padding: 15px 15px 10px 15px;*/
       position: relative;
       color: var(--light-text-med-emph);
     }
@@ -30,12 +30,28 @@ const style = html`
       left: 40px;
       top: 5px;
       z-index: 500;*/
+      margin-bottom: 10px;
       border-radius: 5px;
       overflow: hidden;
       display: none;
     }
     #input-overlay.active {
       display: block;
+      margin-bottom: 10px;
+    }
+    #buttonsBox {
+      display: none;
+      padding-bottom: 10px;
+    }
+    #buttonsBox.active {
+      display: flex;
+      justify-content: flex-end;
+    }
+    labelled-button {
+      margin-left: 5px;
+    }
+    #add-topics {
+      padding-bottom: 5px;
     }
     #add-tags {
       border-top: 1px solid var(--on-surface-line);
@@ -77,7 +93,6 @@ class EntryCreate extends HTMLElement {
   set activeTopics(v) {
     this._activeTopics = v;
     if (v.length < 1) this.activeTags = [];
-    this.showHint = false;
     this.update();
   }
   get activeTags() {
@@ -92,7 +107,6 @@ class EntryCreate extends HTMLElement {
   }
   set newTopics(v) {
     this._newTopics = v;
-    this.showHint = false;
     this.update();
   }
   get newTags() {
@@ -107,10 +121,6 @@ class EntryCreate extends HTMLElement {
   }
   set entry(v) {
     this._entry = v;
-    this.showHint = false;
-    const s = this.selectionElement.classList;
-    if (Object.entries(v).length !== 0) s.add('active')
-    else s.remove('active');
     this.update();
   }
   get inputReady() {
@@ -129,19 +139,15 @@ class EntryCreate extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({mode: 'open'});
-    this.showHint = false;
   }
   connectedCallback() {
     this.update();
-    this.selectionElement = this.shadowRoot.querySelector('#input-overlay');
   }
   async add_entry(_private) {
+    // not really necessary anymore..
     if (!this.valid) {
-      this.showHint = true;
-      this.update();
       return;
     }
-    this.showHint = false;
     this.update();
     const db = await api.getSource('entries');
     const date = new Date();
@@ -184,18 +190,15 @@ class EntryCreate extends HTMLElement {
       return html`<small class="hint">select/create one or more topics...</small>`;
   }
   update() {
+    const buttonBoxClasses = { active: this.valid };
+    const selectionClasses = { active: this.inputReady };
     render(html`${style}
       <div>
         <entry-input class="inline"
                      @ready=${(e)=>{this.inputReady = e.detail}}
                      @inputchange=${(e)=>{this.entry = e.detail}}></entry-input>
-        <labelled-button class="inline" ?disabledstyle=${!this.valid}
-                         @click=${()=>this.add_entry(false)} label="Create"></labelled-button>
-        <labelled-button class="inline" ?disabledstyle=${!this.valid}
-                         @click=${()=>this.add_entry(true)} label="Create Private"></labelled-button>
-        ${this.showHint ? this.getHint() : html``}
       </div>
-      <div id="input-overlay">
+      <div id="input-overlay" class=${classMap(selectionClasses)}>
         <add-items id="add-topics" label="New Topic..."
                    @itemschanged=${(e)=>{this.newTopics = e.detail}}></add-items>
         <topics-list .activeTopics=${this.activeTopics}
@@ -206,6 +209,13 @@ class EntryCreate extends HTMLElement {
         <subtags-list .activeTopics=${this.activeTopics} .activeSubtags=${this.activeTags}
                       @selectionchanged=${(e)=>{this.activeTags = e.detail}}>
         </subtags-list>
+      </div>
+      <div id="buttonsBox" class=${classMap(buttonBoxClasses)}>
+        <labelled-button class="inline" ?disabledstyle=${!this.valid}
+                         @click=${()=>this.add_entry(false)} label="Create"></labelled-button>
+        <labelled-button class="inline" ?disabledstyle=${!this.valid}
+                         @click=${()=>this.add_entry(true)} label="Create Private"></labelled-button>
+        ${this.showHint ? this.getHint() : html``}
       </div>
       `, this.shadowRoot);
   }

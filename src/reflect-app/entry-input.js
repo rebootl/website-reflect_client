@@ -11,7 +11,7 @@ const style = html`
     :host {
       display: block;
       box-sizing: border-box;
-      padding: 15px 15px 0 15px;
+      /*padding: 15px 15px 0 15px;*/
       position: relative;
       color: var(--light-text-med-emph);
     }

@@ -8,7 +8,7 @@ const style = html`
     :host {
       display: block;
       box-sizing: content-box;
-      /*background-color: var(--bg-front);*/
+      /*background-color: var(--background);*/
       padding: 0;
       /*border: 1px dashed #333;*/
     }
