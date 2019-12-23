@@ -36,7 +36,9 @@ class MainHeader extends HTMLElement {
     render(html`
       ${style}
       <div id="logo-box">
-        <img id="logo" src="/layout/logo.png">
+        <a href="#" title="Home">
+          <img id="logo" alt="Logo" src="/layout/logo.png">
+        </a>
       </div>
       <user-menu></user-menu>
     `, this.shadowRoot);
