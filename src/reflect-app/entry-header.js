@@ -24,6 +24,9 @@ const style = html`
     .edit-link {
       float: right;
     }
+    :host([noedit]) .edit-link {
+      display: none;
+    }
   </style>
 `;
 

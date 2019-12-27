@@ -2,6 +2,7 @@ import { html, render } from 'lit-html';
 import { myrouter } from './resources/router.js';
 import './view-entries.js';
 import './view-single-entry.js';
+import './view-edit-entry.js';
 
 const style = html`
   <style>
@@ -12,15 +13,20 @@ const style = html`
       padding: 0;
       /*border: 1px dashed #333;*/
     }
+    view-edit-entry {
+      margin: 20px;
+    }
   </style>
 `;
 
 const routes = {
-  'entries': (url_state_obj) => html`<view-entries class="trigger"
-    .url_state_obj=${url_state_obj}></view-entries>`,
-  'entry': (url_state_obj) => html`<view-single-entry class="trigger"
-    .urlStateObject=${url_state_obj}></view-single-entry>`,
-  'edit-entry': (a) => html`<edit-entry></edit-entry>`,
+  'entries': (o) => html`<view-entries class="triggerupdate"
+    .url_state_obj=${o}></view-entries>`,
+  'entry': (o) => html`<view-single-entry class="triggerupdate"
+    .urlStateObject=${o}></view-single-entry>`,
+  'edit-entry': (o) => html`<view-edit-entry class="triggerupdate"
+    .urlStateObject=${o}>
+    </view-edit-entry>`,
 };
 
 class MainContent extends HTMLElement {
@@ -42,7 +48,7 @@ class MainContent extends HTMLElement {
       this.routed_content = routes['entries'](url_state_obj);
     }
     this.update();
-    const triggeredContent = this.shadowRoot.querySelector('.trigger');
+    const triggeredContent = this.shadowRoot.querySelector('.triggerupdate');
     if (triggeredContent) triggeredContent.triggerUpdate(url_state_obj);
   }
   update() {

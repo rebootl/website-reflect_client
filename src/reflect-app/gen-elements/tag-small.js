@@ -5,19 +5,32 @@ const style = html`
     :host {
       display: inline-block;
       box-sizing: border-box;
-      padding: 2px;
       border-radius: 3px;
-    }
-    :host(.topic) {
-      background-color: var(--light-text-med-emph);
-      padding: 3px;
+      padding: 2px;
+      font-size: 0.9em;
       color: #000;
     }
-    :host(.tag) {
+    :host([type=topic]) {
+      background-color: var(--light-text-med-emph);
+      padding: 3px;
+    }
+    :host([type=tag]) {
       border: 2px solid var(--on-surface-line);
-      padding-left: 2px;
-      padding-right: 2px;
       color: var(--light-text-med-emph);
+    }
+    :host([type=note]) {
+      background-color: var(--light-text-med-emph);
+    }
+    :host([type=link]) {
+      background-color: var(--primary);
+    }
+    :host([type=linkinfo]) {
+      background-color: var(--primary-variant);
+      color: var(--on-primary);
+    }
+    :host([type=brokenlink]) {
+      background-color: var(--error);
+      color: var(--on-error);
     }
   </style>
 `;
@@ -32,8 +45,8 @@ class TagSmall extends HTMLElement {
   }
   update() {
     render(html`${style}
-        <small><slot></slot></small>
-        `, this.shadowRoot);
+      <slot></slot>
+    `, this.shadowRoot);
   }
 }
 

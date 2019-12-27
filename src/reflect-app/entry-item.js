@@ -31,10 +31,11 @@ class EntryItem extends HTMLElement {
     this.update();
   }
   update() {
+    //console.log(this.entry)
     render(html`${style}
         <entry-header .entry=${this.entry}></entry-header>
         <entry-content .entry=${this.entry}></entry-content>
-        ${this.entry.topics.map((t) => html`<tag-small class="topic">${t}</tag-small>`)}${this.entry.tags.map((t) => html`<tag-small class="tag">${t}</tag-small>`)}
+        ${this.entry.topics.map((t) => html`<tag-small type="topic">${t}</tag-small>`)}${this.entry.tags.map((t) => html`<tag-small type="tag">${t}</tag-small>`)}
       `, this.shadowRoot);
   }
 }

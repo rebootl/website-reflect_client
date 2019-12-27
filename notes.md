@@ -1,7 +1,6 @@
 ## ToDo
 
 * add edit-view
-* click logo to "home" view => DONE
 * create-entry comp.
   - reset selection if input empty (needs fixing in the reset functions
     to prevent too much recursion)
@@ -17,6 +16,7 @@
 
 ### Done
 
+* click logo to "home" view => DONE
 * add page not found output if entry id not found => DONE
 * fix create buttons => DONE
 * fix triggers => DONE

@@ -1,8 +1,9 @@
 import { html, render } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map.js';
 import { api } from './resources/api-service.js';
-import './topics-list.js'
-import './subtags-list.js'
+import { digestMessage, getPrefix } from './resources/helpers.js';
+import './topics-list.js';
+import './subtags-list.js';
 import './entry-input.js';
 import './add-items.js';
 
@@ -11,25 +12,11 @@ const style = html`
     :host {
       display: block;
       box-sizing: border-box;
-      /*padding: 15px 15px 10px 15px;*/
       position: relative;
       color: var(--light-text-med-emph);
     }
-    a {
-      color: var(--primary);
-    }
-    .inline {
-      display: inline-block;
-    }
-    #input-overlay-fix {
-      position: relative;
-    }
     #input-overlay {
       background-color: var(--surface);
-      /*position: absolute;
-      left: 40px;
-      top: 5px;
-      z-index: 500;*/
       margin-bottom: 10px;
       border-radius: 5px;
       overflow: hidden;
@@ -45,10 +32,10 @@ const style = html`
     }
     #buttonsBox.active {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
     }
     labelled-button {
-      margin-left: 5px;
+      margin-right: 5px;
     }
     #add-topics {
       padding-bottom: 5px;
@@ -56,35 +43,8 @@ const style = html`
     #add-tags {
       border-top: 1px solid var(--on-surface-line);
     }
-    .overlay {
-      background-color: rgba(255, 255, 255, 0.10);
-      padding: 10px;
-    }
-    .hint {
-      margin
-      display: block;
-      color: var(--error);
-    }
   </style>
 `;
-
-const event_created = new CustomEvent('created', {
-  bubbles: true,
-});
-
-async function digestMessage(message) {
-  const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-  return hashHex;
-}
-
-async function getPrefix(text) {
-  text = text.trimStart().split(" ").slice(0,3).join().replace(/[^a-zA-Z0-9]/g,'-');
-  if (text.length > 50) text = text.slice(0, 50);
-  return text;
-}
 
 class EntryCreate extends HTMLElement {
   get activeTopics() {
@@ -148,7 +108,7 @@ class EntryCreate extends HTMLElement {
     if (!this.valid) {
       return;
     }
-    this.update();
+    //this.update();
     const db = await api.getSource('entries');
     const date = new Date();
     let entry = {
@@ -183,19 +143,12 @@ class EntryCreate extends HTMLElement {
     this.shadowRoot.querySelector('#add-tags').reset();
     this.shadowRoot.querySelector('subtags-list').reset();
   }
-  getHint() {
-    if (!this.inputReady)
-      return html`<small class="hint">entry input incomplete...</small>`;
-    if (this.activeTopics.length < 1 || this.newTopics.length < 1)
-      return html`<small class="hint">select/create one or more topics...</small>`;
-  }
   update() {
     const buttonBoxClasses = { active: this.valid };
     const selectionClasses = { active: this.inputReady };
     render(html`${style}
       <div>
-        <entry-input class="inline"
-                     @ready=${(e)=>{this.inputReady = e.detail}}
+        <entry-input @ready=${(e)=>{this.inputReady = e.detail}}
                      @inputchange=${(e)=>{this.entry = e.detail}}></entry-input>
       </div>
       <div id="input-overlay" class=${classMap(selectionClasses)}>
@@ -215,7 +168,6 @@ class EntryCreate extends HTMLElement {
                          @click=${()=>this.add_entry(false)} label="Create"></labelled-button>
         <labelled-button class="inline" ?disabledstyle=${!this.valid}
                          @click=${()=>this.add_entry(true)} label="Create Private"></labelled-button>
-        ${this.showHint ? this.getHint() : html``}
       </div>
       `, this.shadowRoot);
   }

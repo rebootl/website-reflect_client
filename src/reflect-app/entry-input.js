@@ -5,67 +5,32 @@ import { url_info_url } from './resources/urls.js';
 import { get_auth_header } from './resources/auth.js';
 import './gen-elements/textarea-input.js';
 import './gen-elements/text-input.js';
+import './gen-elements/tag-small.js';
 
 const style = html`
   <style>
     :host {
       display: block;
       box-sizing: border-box;
-      /*padding: 15px 15px 0 15px;*/
-      position: relative;
       color: var(--light-text-med-emph);
     }
-    a {
-      color: var(--primary);
-    }
+    /* does this work?
     textarea-input {
       height: 25px;
-    }
-    .inline {
-      display: inline-block;
-    }
-    #type-detection {
-      display: block;
+    }*/
+    #typeDetectionBox {
+      /*display: block;*/
       padding: 10px 0 10px 10px;
       color: var(--light-text-low-emph);
     }
-    #type {
-      color: var(--light-text-low-emph);
-      border-radius: 3px;
-      padding: 2px;
-    }
-    #type.pend {
-      /*color: var(--light-text-med-emph);*/
-    }
-    #type.note {
-      color: var(--background);
-      color: #000;
-      background-color: var(--light-text-med-emph);
-    }
-    #type.link {
-      color: var(--on-primary);
-      background-color: var(--primary);
-    }
-    #link-info {
-      border-radius: 3px;
-      padding: 2px;
-    }
-    .brokenlink {
-      color: var(--on-error);
-      background-color: var(--error);
-    }
-    .goodlink {
-      color: var(--on-primary);
-      background-color: var(--primary-variant);
-    }
-    #input-err {
-      display: block;
-      color: var(--error);
-      padding-left: 15px;
-      padding-top: 5px;
+    tag-small {
+      /* avoid moving down of stuff when element appears */
+      display: inline;
+      margin-right: 5px;
     }
     #comment {
       display: none;
+      margin-bottom: 5px;
     }
     #comment.active {
       display: block;
@@ -117,6 +82,18 @@ class EntryInput extends HTMLElement {
   set comment(v) {
     this._comment = v;
     this.result = {...this.result, comment: v};
+  }
+  get loadtext() {
+    return this.getAttribute('loadtext') || "";
+  }
+  get placeholder() {
+    return this.getAttribute('placeholder') || "New Entry...";
+  }
+  get rows() {
+    return this.getAttribute('rows') || 1;
+  }
+  get cols() {
+    return this.getAttribute('cols') || 30;
   }
   constructor() {
     super();
@@ -197,45 +174,40 @@ class EntryInput extends HTMLElement {
   }
   getTypeDetect() {
     if (this.status.detection === 'typing')
-      return html`<span id="type">typing...</span>`;
+      return html`<small>typing...</small>`;
     if (this.result.type === 'link' && this.status === 'pending') {
-      return html`<span id="type" class="link">Link</span>
-                  <span id="link-info">getting URL info...</span>`;
+      return html`<tag-small type="link">Link</tag-small>
+                  <small>getting URL info...</small>`;
     }
-    if ((this.result.type === 'link' || this.result.type === 'brokenlink')
-      && this.status === 'complete') {
-      const linkClass = {
-        goodlink: this.result.type === 'link',
-        brokenlink: this.result.type === 'brokenlink'
-      }
-      return html`<span id="type" class="link">Link</span>
-                  <span id="link-info" class=${classMap(linkClass)}>${this.result.info}</span>
-                  <span id="link-title">${this.result.title}</span>`;
+    if (this.result.type === 'link' && this.status === 'complete') {
+      return html`<tag-small type="link">Link</tag-small>
+                  <tag-small type="linkinfo">${this.result.info}</tag-small>
+                  <small>${this.result.title}</small>`;
+    }
+    if (this.result.type === 'brokenlink' && this.status === 'complete') {
+      return html`<tag-small type="link">Link</tag-small>
+                  <tag-small type="brokenlink">${this.result.info}</tag-small>
+                  <small>${this.result.title}</small>`;
     }
     if (this.result.type === 'note')
-      return html`<span id="type" class="note">Note</span>`;
-    return html`<span id="type">Autodetect</span>`;
+      return html`<tag-small type="note">Note</tag-small>`;
+    return html`<small>Autodetect<small>`;
   }
   update() {
-    //console.log(this.result);
-
-    const commentClasses = {
-      active: this.result.type === 'link',
-    };
-
+    const commentClasses = { active: this.result.type === 'link' };
     render(html`${style}
-      <textarea-input id="entry-text" height="25" class="inline"
+      <textarea-input id="entry-text" rows=${this.rows} cols=${this.cols}
                   @input=${(e)=>this.triggerDetect(e.target.value.trim())}
-                  placeholder="New Entry..."></textarea-input>
-      <small id="type-detection">Type:
-        ${this.getTypeDetect()}
-      </small>
+                  placeholder=${this.placeholder}
+                  loadtext=${this.loadtext}></textarea-input>
+      <div id="typeDetectionBox">
+        <small id="typeDetection">Type: </small>${this.getTypeDetect()}
+      </div>
       <text-input id="comment" size="25" class=${classMap(commentClasses)}
                   @input=${(e)=>{this.comment = e.target.value.trim()}}
                   placeholder="Add a comment..."></text-input>
-      `, this.shadowRoot);
-      //@input=${(e)=>this.detectThrottled(e.target.value.trim())}
-      //@input=${(e)=>this.triggerDetect(e.target.value.trim())}
+      `,
+      this.shadowRoot);
   }
 }
 
