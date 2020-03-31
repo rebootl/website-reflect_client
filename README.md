@@ -1,6 +1,8 @@
-# reflect
+__Info: client was integrated into:__ [reflectapp](https://github.com/rebootl/reflectapp)
 
-"manage notes, links, images aso. w/ a modern looking webapplication"
+__this is kept here only for reference__
+
+---
 
 ## Client
 
