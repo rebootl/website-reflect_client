@@ -1,6 +1,6 @@
-__Info: client was integrated into:__ [reflectapp](https://github.com/rebootl/reflectapp)
+__Info: The client was integrated into:__ [reflectapp](https://github.com/rebootl/reflectapp)
 
-__this is kept here only for reference__
+__This repository is kept for reference only.__
 
 ---
 
